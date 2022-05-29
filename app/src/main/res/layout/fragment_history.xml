@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
+    android:descendantFocusability="blocksDescendants"
     android:orientation="vertical">
 
     <LinearLayout
@@ -17,12 +17,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="배운 자세 목록"
+            android:text="자세 연습 목록"
             android:textStyle="bold"
             android:textSize="20dp"
             android:layout_gravity="center"
             android:paddingTop="10dp"
-            android:paddingLeft="10dp"
+            android:paddingLeft="15dp"
             android:textColor="@color/black">
 
         </TextView>
@@ -38,7 +38,6 @@
 
         </ImageButton>
 
-
     </LinearLayout>
 
     <LinearLayout
@@ -47,6 +46,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical">
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab"
             android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                 android:id="@+id/tab_Item1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="자세 목록" />
+                android:text="자세 연습 목록" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tab_Item2"

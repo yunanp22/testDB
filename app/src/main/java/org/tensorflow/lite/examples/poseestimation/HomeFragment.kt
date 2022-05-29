@@ -5,15 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_home.*
+
 
 class HomeFragment : Fragment() {
 
     private lateinit var practiceListFragment: PracticeListFragment
     private lateinit var gripFragment: GripFragment
     private lateinit var postureVideoFragment: PostureVideoFragment
+
+    //firebase Auth
+    private lateinit var firebaseAuth: FirebaseAuth
+    //firebase firestore
+    private lateinit var firestore: FirebaseFirestore
 
     companion object {
         fun newInstance() : HomeFragment {
@@ -31,7 +38,35 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        var a : String = ""
+        var c : Int
+        firestore = FirebaseFirestore.getInstance()
+        firebaseAuth = FirebaseAuth.getInstance()
+        val docRef = firestore.collection("users").document(firebaseAuth?.uid.toString())
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if(document != null){
+
+                    a = document["userNickName"].toString()
+                    intro_text.setText(a + "님, \n안녕하세요")
+                    a = document["ballsize"].toString()
+                    c = a.toInt()
+                    ballsize_value.setText(""+ c + " lb")
+                    a = document["avg"].toString()
+                    avg_value.setText(a)
+                    a = document["recentScore"].toString()
+                    recent_value.setText(a)
+                } else {
+
+                }
+            }
+            .addOnFailureListener { exception ->
+
+            }
+
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+
         return view
     }
 
@@ -71,8 +106,6 @@ class HomeFragment : Fragment() {
         viewpager.apply {
             adapter = carouselAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            //불필요한 스크롤 애니메이션 삭제
-            (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         }
 
         //두번째 아이템이 가장 먼저 나오도록 설정
@@ -88,12 +121,14 @@ class HomeFragment : Fragment() {
             onHomePostureButtonClicked()
         }
 
+
     }
 
     //그립 버튼 클릭 리스너 정의
     private fun onHomeGripButtonClicked() {
         gripFragment = GripFragment.newInstance()
         parentFragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,R.anim.exit_to_right).add(R.id.fragments_frame, gripFragment).commit()
+
     }
 
     //자세 버튼 클릭 리스너 정의

@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="?android:windowBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:background="#F3F3F3"
+        android:background="?android:windowBackground"
         android:orientation="vertical">
 
         <LinearLayout
@@ -18,11 +19,12 @@
             android:layout_weight="3"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/nickNameText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="밤톨이"
+                android:text=""
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                android:textColor="?attr/titleTextColor"
                 android:textSize="20sp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="50dp">
@@ -41,21 +43,23 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
                 <TextView
+                    android:id="@+id/ageText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="나이 : 21"
+                    android:text="나이 : "
                     android:textStyle="bold"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/titleTextColor"
                     android:textSize="16sp"
                     android:layout_margin="15dp">
 
                 </TextView>
                 <TextView
+                    android:id="@+id/ballsizeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="볼사이즈 : 15 lb"
+                    android:text="볼사이즈 :      "
                     android:textStyle="bold"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/titleTextColor"
                     android:textSize="16sp"
                     android:layout_margin="15dp">
 
@@ -67,21 +71,23 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
                 <TextView
+                    android:id="@+id/gradeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="등급 : 3"
+                    android:text="등급 : "
                     android:textStyle="bold"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/titleTextColor"
                     android:textSize="16sp"
                     android:layout_margin="15dp">
 
                 </TextView>
                 <TextView
+                    android:id="@+id/avgText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="평균 정확도 : 91%"
+                    android:text="평균 정확도 : "
                     android:textStyle="bold"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/titleTextColor"
                     android:textSize="16sp"
                     android:layout_margin="15dp">
 
@@ -96,56 +102,111 @@
         android:layout_weight="1"
         android:orientation="vertical"
         >
-        <Button
-            android:id="@+id/myInfo"
+
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="30dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:layout_marginBottom="2dp"
             android:text="내 정보 관리"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:textColor="#A3A0A0"
+            android:background="?attr/colorSurface">
+
+        </TextView>
+
+        <Button
+            android:id="@+id/myNickName_btn"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="닉네임 변경"
+            android:textSize="18sp"
             android:gravity="center_vertical"
             android:paddingLeft="20sp"
             android:paddingRight="20sp"
             android:insetTop="0dp"
-            android:insetBottom="1dp"
+            android:insetBottom="3dp"
             app:cornerRadius="0dp"
-            android:textColor="@color/black"
-            android:backgroundTint="#FFFFFF"
+            android:textColor="?attr/titleTextColor"
+            android:backgroundTint="?attr/colorSurface"
             android:drawableRight="@drawable/drawable_right_image_menu"
             android:drawableTint="#979797"/>
         <Button
-            android:id="@+id/mySetting"
+            android:id="@+id/myAge_btn"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:text="설정"
-            android:textSize="20sp"
-            android:insetTop="0dp"
-            android:insetBottom="1dp"
-            android:textStyle="bold"
+            android:layout_height="70dp"
+            android:text="나이 변경"
+            android:textSize="18sp"
             android:gravity="center_vertical"
             android:paddingLeft="20sp"
             android:paddingRight="20sp"
+            android:insetTop="0dp"
+            android:insetBottom="3dp"
             app:cornerRadius="0dp"
-            android:textColor="@color/black"
-            android:backgroundTint="#FFFFFF"
+            android:textColor="?attr/titleTextColor"
+            android:backgroundTint="?attr/colorSurface"
             android:drawableRight="@drawable/drawable_right_image_menu"
             android:drawableTint="#979797"/>
         <Button
-            android:id="@+id/appInfo"
+            android:id="@+id/myBallSize_btn"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:text="개인 정보보호 및 취급 방침"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:cornerRadius="0dp"
+            android:layout_height="70dp"
+            android:text="볼사이즈 변경"
+            android:textSize="18sp"
             android:gravity="center_vertical"
-            android:insetTop="0dp"
-            android:insetBottom="1dp"
             android:paddingLeft="20sp"
             android:paddingRight="20sp"
-            android:textColor="@color/black"
-            android:backgroundTint="#FFFFFF"
+            android:insetTop="0dp"
+            android:insetBottom="3dp"
+            app:cornerRadius="0dp"
+            android:textColor="?attr/titleTextColor"
+            android:backgroundTint="?attr/colorSurface"
             android:drawableRight="@drawable/drawable_right_image_menu"
             android:drawableTint="#979797"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="2dp"
+            android:text="앱 설정"
+            android:textColor="#A3A0A0"
+            android:background="?attr/colorSurface">
+
+        </TextView>
+        <Button
+            android:id="@+id/myMode_btn"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="모드 변경"
+            android:textSize="18sp"
+            android:insetTop="0dp"
+            android:insetBottom="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20sp"
+            android:paddingRight="20sp"
+            app:cornerRadius="0dp"
+            android:textColor="?attr/titleTextColor"
+            android:backgroundTint="?attr/colorSurface"
+            android:drawableRight="@drawable/drawable_right_image_menu"
+            android:drawableTint="#979797"/>
+        <Button
+            android:id="@+id/myLogOut_btn"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="로그아웃"
+            android:textSize="18sp"
+            android:insetTop="0dp"
+            android:insetBottom="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20sp"
+            android:paddingRight="20sp"
+            app:cornerRadius="0dp"
+            android:textColor="?attr/titleTextColor"
+            android:backgroundTint="?attr/colorSurface"
+            android:drawableRight="@drawable/drawable_right_image_menu"
+            android:drawableTint="#979797"/>
+
     </LinearLayout>
 </LinearLayout>

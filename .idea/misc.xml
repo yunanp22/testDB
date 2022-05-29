@@ -5,10 +5,16 @@
       <map>
         <entry key="..\:/Users/yee95/Desktop/examples-master1/examples-master/lite/examples/pose_estimation/android/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/yee95/Desktop/examples-master1/examples-master/lite/examples/pose_estimation/android/app/src/main/res/layout/bottom_sheet_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.20377960205078122" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19610507246376813" />
+        <entry key="app/src/main/res/layout/activity_my_info.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_my_setting.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/activity_resultpopup.xml" value="0.1" />
         <entry key="app/src/main/res/layout/bottom_sheet_layout.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/carousel_item.xml" value="0.13229166666666667" />
+        <entry key="app/src/main/res/layout/custom_dialog_age.xml" value="0.28229166666666666" />
+        <entry key="app/src/main/res/layout/custom_dialog_ballsize.xml" value="0.28229166666666666" />
+        <entry key="app/src/main/res/layout/custom_dialog_nickname.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/fragment_grip.xml" value="0.23822463768115942" />
         <entry key="app/src/main/res/layout/fragment_history.xml" value="0.13229166666666667" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.23822463768115942" />

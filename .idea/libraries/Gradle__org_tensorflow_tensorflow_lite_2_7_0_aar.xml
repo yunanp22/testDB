@@ -3,8 +3,9 @@
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/936ba1bac55fcd64c106f58d57e68607/transformed/jetified-tensorflow-lite-2.7.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/6510f63cca37c85632c70706254d8200/transformed/jetified-tensorflow-lite-2.7.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/6510f63cca37c85632c70706254d8200/transformed/jetified-tensorflow-lite-2.7.0/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/6510f63cca37c85632c70706254d8200/transformed/jetified-tensorflow-lite-2.7.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ff79fcae3cddb0e967d3e3bb75ed3d9f/transformed/jetified-tensorflow-lite-2.7.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/ff79fcae3cddb0e967d3e3bb75ed3d9f/transformed/jetified-tensorflow-lite-2.7.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ff79fcae3cddb0e967d3e3bb75ed3d9f/transformed/jetified-tensorflow-lite-2.7.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
