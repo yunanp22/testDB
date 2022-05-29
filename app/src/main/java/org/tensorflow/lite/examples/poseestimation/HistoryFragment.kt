@@ -55,7 +55,7 @@ class HistoryFragment : Fragment() {
 
         var VideoList = arrayListOf<PostureListData>()
         firestore.collection("videoList")
-            .whereEqualTo("uid", firebaseAuth.uid).orderBy("date")
+            .whereEqualTo("uid", firebaseAuth.uid)
             .get()
             .addOnSuccessListener { result ->
                 for(document in result){
