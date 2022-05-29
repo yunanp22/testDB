@@ -48,12 +48,12 @@ class OnBoardActivity : AppCompatActivity() {
 
         position = onBoardingViewPager!!.currentItem
 
-//        startOnboardBtn?.setOnClickListener {
-//            savePrefDate()
-//            val i = Intent(applicationContext, RegisterActivity::class.java)  //회원가입 화면으로 이동
-//            startActivity(i)
-//            finish()
-//        }
+        startOnboardBtn?.setOnClickListener {
+            savePrefDate()
+            val i = Intent(applicationContext, SignUpActivity::class.java)  //회원가입 화면으로 이동
+            startActivity(i)
+            finish()
+        }
 
         loginOnboard?.setOnClickListener {
             savePrefDate()

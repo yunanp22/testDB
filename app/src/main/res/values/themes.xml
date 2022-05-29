@@ -2,6 +2,12 @@
     <!-- Base application theme. -->
     <style name="Theme.BowlingSam" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
+        <!-- 라이트 모드 -->
+        <item name="colorSurface">@android:color/white</item>
+        <item name="backgroundColor">@android:color/white</item>
+        <item name="android:windowBackground">@color/gray</item>
+        <item name="titleTextColor">@android:color/black</item>
+
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
