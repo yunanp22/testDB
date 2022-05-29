@@ -2,16 +2,23 @@ package org.tensorflow.lite.examples.poseestimation
 
 import android.graphics.*
 import android.icu.text.AlphabeticIndex
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_resultpopup.*
 import org.tensorflow.lite.examples.poseestimation.data.Device
 import org.tensorflow.lite.examples.poseestimation.data.Person
 import org.tensorflow.lite.examples.poseestimation.ml.ModelType
 import org.tensorflow.lite.examples.poseestimation.ml.MoveNet
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class ResultPopupActivity: AppCompatActivity() {
@@ -32,6 +39,14 @@ class ResultPopupActivity: AppCompatActivity() {
     private lateinit var poseAngleDifferences: Array<FloatArray?>
 
     private var isTrackerEnabled = false
+
+
+    //firebase Auth
+    private lateinit var firebaseAuth: FirebaseAuth
+    //firebase firestore
+    private lateinit var firestore: FirebaseFirestore
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +79,8 @@ class ResultPopupActivity: AppCompatActivity() {
         var score4 = intent.getFloatExtra("backswingScore", 0.0f)
         var score5 = intent.getFloatExtra("forwardswingScore", 0.0f)
         var score6 = intent.getFloatExtra("followthroughScore", 0.0f)
+
+        var scoreList = listOf(score1, score2, score3, score4, score5, score6)
         Log.d("TAG", "score1 : ${score1}")
 
         var addressResultURI = intent.getStringExtra("addressuri")
@@ -82,6 +99,7 @@ class ResultPopupActivity: AppCompatActivity() {
         var followthroughBitmap = BitmapFactory.decodeFile(followthroughResultURI)
         Log.d("TAG", "addressBitmap : ${addressBitmap}")
 
+        var bitmapList = listOf(addressResultURI, pushawayResultURI, downswingResultURI, backswingResultURI, forwardswingResultURI, followthroughResultURI)
 
         var addressAngleDifferences = intent.getFloatArrayExtra("addressAngleDifferences")
         var pushawayAngleDifferences = intent.getFloatArrayExtra("pushawayAngleDifferences")
@@ -97,6 +115,9 @@ class ResultPopupActivity: AppCompatActivity() {
         var backswingPerson = intent.getParcelableExtra<Person>("backswingperson")
         var forwardswingPerson = intent.getParcelableExtra<Person>("forwardswingperson")
         var followthroughPerson = intent.getParcelableExtra<Person>("followthroughperson")
+
+        var personList = listOf(addressPerson, pushawayPerson, downswingPerson, backswingPerson, forwardswingPerson, followthroughPerson)
+
 
         poseAngleDifferences = arrayOf(addressAngleDifferences, pushawayAngleDifferences,
             downswingAngleDifferences, backswingAngleDifferences, forwardswingAngleDifferences, followthroughAngleDifferences)
@@ -177,8 +198,39 @@ class ResultPopupActivity: AppCompatActivity() {
             }
 
             okButton.setOnClickListener {
+
+                //문서 업데이트
+                firebaseAuth = FirebaseAuth.getInstance()
+                firestore = FirebaseFirestore.getInstance()
+
+                var videoList = VideoListData()
+                videoList.uid = firebaseAuth?.currentUser?.uid
+
+//                 videoList.videoID = 비디오구분 아이디 String
+//                 videoList.feedback = 피드백 내용 String
+//                 videoList.score = 점수 Int
+                val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
+                var path = Uri.fromFile(File(
+                    Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DCIM), "VID_${sdf.format(Date())}.mp4")).toString()
+                videoList.videoPath = path
+//
+                videoList.scoreList = scoreList
+                videoList.addressAngleDifference = addressAngleDifferences?.toList()
+                videoList.pushawayAngleDifference = pushawayAngleDifferences?.toList()
+                videoList.downswingAngleDifference = downswingAngleDifferences?.toList()
+                videoList.backswingAngleDifference = backswingAngleDifferences?.toList()
+                videoList.forwardswingAngleDifference = forwardswingAngleDifferences?.toList()
+                videoList.followthroughAngleDifference = followthroughAngleDifferences?.toList()
+                videoList.personList = personList
+                videoList.bitmapList = bitmapList
+//                videoList.bitmapList = bitmapList
+
+                firestore?.collection("videolist").add(videoList)
+
                 RecordFragment.resetRecordedInfo()
                 MoveNet.resetInfo()
+
                 finish()
             }
         }

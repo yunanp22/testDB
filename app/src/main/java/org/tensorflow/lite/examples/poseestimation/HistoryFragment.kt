@@ -1,5 +1,6 @@
 package org.tensorflow.lite.examples.poseestimation
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import kotlinx.android.synthetic.main.custom_dialog_age.*
 import kotlinx.android.synthetic.main.fragment_history.*
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.android.synthetic.main.history_list_item.*
+import org.tensorflow.lite.examples.poseestimation.data.Person
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,32 +55,39 @@ class HistoryFragment : Fragment() {
         var count : Int = 0
         var recentScore : Int = 0
 
-        var VideoList = arrayListOf<PostureListData>()
-        firestore.collection("videoList")
+        var VideoList = arrayListOf<VideoListData>()
+        firestore.collection("videolist")
             .whereEqualTo("uid", firebaseAuth.uid)
             .get()
             .addOnSuccessListener { result ->
                 for(document in result){
 
-                    // 평균 점수 불러오기
-                    var a = document["score"].toString()
-                    var c : Int = a.toInt()
-                    sum += c
-                    count++
-                    recentScore = c
-
-                    // 기록 불러오기
-                    val date = document["date"]
-                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale("ko", "KR"))
-                    val strDate = dateFormat.format(date).toString()
-                    VideoList.add(PostureListData(
+//                    // 평균 점수 불러오기
+//                    var a = document["score"].toString()
+//                    var c : Int = a.toInt()
+//                    sum += c
+//                    count++
+//                    recentScore = c
+//
+//                    // 기록 불러오기
+//                    val date = document["date"]
+//                    val dateFormat = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
+//                    val strDate = dateFormat.format(date).toString()
+                    VideoList.add(
+                        VideoListData(
                         document["uid"].toString(),
-                        document["videoID"].toString(),
-                        "bowling",
-                        strDate,
-                        "정확도 "+ document["score"] +"%",
-                        document["favorite"] as Boolean,
-                        document["feedback"].toString()
+                        document["videoPath"].toString(),
+                        0.0f,
+                        document["scoreList"] as List<Float>?,
+                        document["addressAngleDifference"] as List<Float?>?,
+                        document["pushawayAngleDifference"] as List<Float?>?,
+                        document["downswingAngleDifference"] as List<Float?>?,
+                        document["backswingAngleDifference"] as List<Float?>?,
+                        document["forwardswingAngleDifference"] as List<Float?>?,
+                        document["followthroughAngleDifference"] as List<Float?>?,
+                        document["personList"] as List<Person?>?,
+                        document["bitmapList"] as List<String?>?,
+                        document["isFavorite"] as Boolean?
                     )
                     )
                 }
@@ -164,8 +173,8 @@ class HistoryFragment : Fragment() {
                         var count : Int = 0
                         var recentScore : Int = 0
 
-                        var VideoList = arrayListOf<PostureListData>()
-                        firestore.collection("videoList")
+                        var VideoList = arrayListOf<VideoListData>()
+                        firestore.collection("videolist")
                             .whereEqualTo("uid", firebaseAuth.uid).orderBy("date")
                             .get()
                             .addOnSuccessListener { result ->
@@ -182,16 +191,24 @@ class HistoryFragment : Fragment() {
                                     val date = document["date"]
                                     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale("ko", "KR"))
                                     val strDate = dateFormat.format(date).toString()
-                                    VideoList.add(PostureListData(
-                                        document["uid"].toString(),
-                                        document["videoID"].toString(),
-                                        "bowling",
-                                        strDate,
-                                        "정확도 "+ document["score"] +"%",
-                                        document["favorite"] as Boolean,
-                                        document["feedback"].toString()
+                                    VideoList.add(
+                                        VideoListData(
+                                            document["uid"].toString(),
+                                            document["videoPath"].toString(),
+                                            0.0f,
+                                            document["scoreList"] as List<Float>?,
+                                            document["addressAngleDifference"] as List<Float?>?,
+                                            document["pushawayAngleDifference"] as List<Float?>?,
+                                            document["downswingAngleDifference"] as List<Float?>?,
+                                            document["backswingAngleDifference"] as List<Float?>?,
+                                            document["forwardswingAngleDifference"] as List<Float?>?,
+                                            document["followthroughAngleDifference"] as List<Float?>?,
+                                            document["personList"] as List<Person?>?,
+                                            document["bitmapList"] as List<String?>?,
+                                            document["isFavorite"] as Boolean?
+                                        )
                                     )
-                                    )
+
                                 }
                                 //평균 계산 후 avg에 업데이트
                                 var avg = 0
@@ -239,8 +256,8 @@ class HistoryFragment : Fragment() {
                         firestore = FirebaseFirestore.getInstance()
 
 
-                        var VideoList = arrayListOf<PostureListData>()
-                        firestore.collection("videoList")
+                        var VideoList = arrayListOf<VideoListData>()
+                        firestore.collection("videolist")
                             .whereEqualTo("uid", firebaseAuth.uid).orderBy("date")
                             .get()
                             .addOnSuccessListener { result ->
@@ -249,18 +266,23 @@ class HistoryFragment : Fragment() {
                                     //선택된것만
                                     if(document["favorite"] == true){
                                         // 기록 불러오기
-                                        val date = document["date"]
-                                        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale("ko", "KR"))
-                                        val strDate = dateFormat.format(date).toString()
-                                        VideoList.add(PostureListData(
-                                            document["uid"].toString(),
-                                            document["videoID"].toString(),
-                                            "bowling",
-                                            strDate,
-                                            "정확도 "+ document["score"] +"%",
-                                            document["favorite"] as Boolean,
-                                            document["feedback"].toString()
-                                        )
+
+                                        VideoList.add(
+                                            VideoListData(
+                                                document["uid"].toString(),
+                                                document["videoPath"].toString(),
+                                                0.0f,
+                                                document["scoreList"] as List<Float>?,
+                                                document["addressAngleDifference"] as List<Float?>?,
+                                                document["pushawayAngleDifference"] as List<Float?>?,
+                                                document["downswingAngleDifference"] as List<Float?>?,
+                                                document["backswingAngleDifference"] as List<Float?>?,
+                                                document["forwardswingAngleDifference"] as List<Float?>?,
+                                                document["followthroughAngleDifference"] as List<Float?>?,
+                                                document["personList"] as List<Person?>?,
+                                                document["bitmapList"] as List<String?>?,
+                                                document["isFavorite"] as Boolean?
+                                            )
                                         )
                                     }
                                 }

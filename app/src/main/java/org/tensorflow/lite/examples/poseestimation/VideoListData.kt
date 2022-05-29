@@ -1,10 +1,22 @@
 package org.tensorflow.lite.examples.poseestimation
 
-class VideoListData(
+import android.graphics.Bitmap
+import org.tensorflow.lite.examples.poseestimation.data.Person
+
+data class VideoListData(
     var uid : String? = null,
-    var date : Long? = System.currentTimeMillis(),
-    var videoID : String? = "미설정",
-    var feedback : String? = "피드백",
-    var score : Int? = 0,
+//    var date : Long? = System.currentTimeMillis(),
+    var videoPath : String? = "미설정",
+//    var feedback : String? = "피드백",
+    var score : Float? = 0.0f,
+    var scoreList: List<Float>? = null,
+    var addressAngleDifference: List<Float?>? = null,
+    var pushawayAngleDifference: List<Float?>? = null,
+    var downswingAngleDifference: List<Float?>? = null,
+    var backswingAngleDifference: List<Float?>? = null,
+    var forwardswingAngleDifference: List<Float?>? = null,
+    var followthroughAngleDifference: List<Float?>? = null,
+    var personList: List<Person?>? = null,
+    var bitmapList: List<String?>? = null,
     val isFavorite : Boolean? = false
-) {}
+)

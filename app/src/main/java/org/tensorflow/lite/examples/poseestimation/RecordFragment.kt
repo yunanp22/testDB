@@ -250,7 +250,7 @@ class RecordFragment : Fragment() {
         val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
         return File(
             Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DCIM), "VID_${sdf.format(Date())}.$extension")
+                Environment.DIRECTORY_DCIM), "${sdf.format(Date())}.$extension")
 //            return  File(context.getExternalFilesDir(null), "VID_${sdf.format(Date())}.$extension")
     }
 
@@ -638,8 +638,14 @@ class RecordFragment : Fragment() {
 //        }
 //        var path = Environment.getExternalStoragePublicDirectory(
 //            Environment.DIRECTORY_PICTURES)
+
+        val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
+//        var path = Uri.fromFile(File(
+//            Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_DCIM), "VID_.mp4")).toString()
+
         var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file, "${pose.pose}.jpg")
+        file = File(file, "${sdf.format(Date())}${pose.pose}.jpg")
 //        var imageFile: OutputStream? = null
         try{
             val stream: OutputStream = FileOutputStream(file)

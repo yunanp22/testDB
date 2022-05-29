@@ -2,6 +2,8 @@ package org.tensorflow.lite.examples.poseestimation
 
 import android.app.Dialog
 import android.content.Context
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +16,11 @@ import kotlinx.android.synthetic.main.example_dialog.*
 import kotlinx.android.synthetic.main.fragment_history.*
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.android.synthetic.main.history_list_item.view.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
-class HistoryListAdapter(val context: Context, val VideoList: ArrayList<PostureListData>) : BaseAdapter() {
+class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoListData>) : BaseAdapter() {
 
     //firebase Auth
     private lateinit var firebaseAuth: FirebaseAuth
@@ -36,9 +41,9 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<PostureL
             holder = ViewHolder()
             holder.view_image1 = view.findViewById(R.id.posturePhotoImg)
             holder.view_text1 = view.findViewById(R.id.posture_number)
-            holder.view_text2 = view.findViewById(R.id.date)
-            holder.view_text3 = view.findViewById(R.id.correct_score)
-            holder.view_favorite = view.findViewById(R.id.checkbox_favorite)
+//            holder.view_text2 = view.findViewById(R.id.date)
+//            holder.view_text3 = view.findViewById(R.id.correct_score)
+//            holder.view_favorite = view.findViewById(R.id.checkbox_favorite)
 
             view.tag = holder
         } else {
@@ -47,13 +52,13 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<PostureL
         }
 
         val item = VideoList[position]
-        val resourceId = context.resources.getIdentifier(item.image, "drawable", context.packageName)
+//        val resourceId = context.resources.getIdentifier(item.image, "drawable", context.packageName)
 
-        holder.view_image1?.setImageResource(resourceId)
-        holder.view_text1?.text = item.date
-        holder.view_text2?.text = item.score
-        holder.view_text3?.text = item.videoID
-        holder.view_favorite?.isChecked = item.isFavorite
+        holder.view_image1?.setImageResource(R.drawable.bowling)
+        holder.view_text1?.text = item.videoPath
+//        holder.view_text2?.text = item.score
+//        holder.view_text3?.text = item.videoID
+        holder.view_favorite?.isChecked = item.isFavorite!!
 
         // 스위치 상태가 변할 때마다 이 여부를 해당 position의 아이템에 스위치 상태를 설정
         holder.view_favorite?.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -64,7 +69,7 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<PostureL
         view.checkbox_favorite.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 if(view.checkbox_favorite.isChecked){
-                    firestore.collection("videoList")
+                    firestore.collection("videolist")
                         .whereEqualTo("uid", firebaseAuth.uid).orderBy("date")
                         .get()
                         .addOnSuccessListener{
@@ -79,7 +84,7 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<PostureL
         view.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val dialog = CustomDialog(context)
-                dialog.myDialog(item.feedback)
+                dialog.myDialog(item.videoPath)
             }
         })
 
@@ -113,14 +118,102 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<PostureL
 
 class CustomDialog(context: Context) {
     private val dialog = Dialog(context)
+
+    //firebase Auth
+    private lateinit var firebaseAuth: FirebaseAuth
+    //firebase firestore
+    private lateinit var firestore: FirebaseFirestore
+
     val c = context
 
-    fun myDialog(posture : String){
+    fun myDialog(videoPath : String?){
         dialog.setContentView(R.layout.example_dialog)
 
 //        var path = Environment.getExternalStoragePublicDirectory(DIRECTORY_DCIM)
 //        dialog.dialog_video.setVideoPath(""+path + "/VID_2022_05_27_22_49_27_292.mp4")
-        dialog.dialog_video.setVideoPath("android.resource://com.example.bowlingsam/"+ R.raw.sample1)
+        //문서 업데이트
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+        var uri: String? = null
+        Log.d("TAG", "myDialog: $videoPath")
+
+//        var VideoList = arrayListOf<PostureListData>()
+        firestore.collection("videolist")
+            .whereEqualTo("uid", firebaseAuth.uid)
+            .get()
+            .addOnSuccessListener { result ->
+                Log.d("TAG", "myDialog: $result")
+                for(document in result) {
+
+
+                    if (document["videoPath"].toString().equals(videoPath) ) {
+                        uri = videoPath
+                        Log.d("TAG", "myDialog: $uri")
+                    }
+                }
+
+
+//                for(document in result){
+//
+////                    // 평균 점수 불러오기
+////                    var a = document["score"].toString()
+////                    var c : Int = a.toInt()
+////                    sum += c
+////                    count++
+////                    recentScore = c
+////
+////                    // 기록 불러오기
+////                    val date = document["date"]
+////                    val dateFormat = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
+////                    val strDate = dateFormat.format(date).toString()
+////                    VideoList.add(PostureListData(
+////                        document["uid"].toString(),
+////                        document["videoID"].toString(),
+////                        "bowling",
+////                        strDate,
+////                        "정확도 "+ document["score"] +"%",
+////                        document["favorite"] as Boolean,
+////                        document["feedback"].toString()
+////                    )
+////                    )
+//                }
+//                var avg = 0
+//                //평균 계산 후 avg에 업데이트
+//                if (count == 0){
+//                    avg = 0
+//                } else {
+//                    avg = sum/count
+//                }
+//
+//                var userInfo = UsersData()
+//                //평균으로 등급 부여
+//                var grade : Int = when(avg){
+//                    in 95 until 100 -> 1
+//                    in 85 until 94 -> 2
+//                    in 84 until 84 -> 3
+//                    in 65 until 74 -> 4
+//                    in 55 until 64 -> 5
+//                    in 45 until 54 -> 6
+//                    in 35 until 44 -> 7
+//                    in 25 until 34 -> 8
+//                    else -> 9
+//                }
+//                println(grade)
+//                userInfo.avg = avg
+//                userInfo.grade = grade
+//                userInfo.recentScore = recentScore
+//                firestore?.collection("users")?.document(firebaseAuth?.uid.toString())?.update("avg", userInfo.avg,"grade", userInfo.grade, "recentScore", userInfo.recentScore )
+
+
+
+            }
+            .addOnFailureListener { exception ->
+
+            }
+
+
+        dialog.dialog_video.setVideoPath(Uri.fromFile(uri))
         dialog.dialog_video.setOnPreparedListener {
             val mediaController = MediaController(c)
             mediaController.setAnchorView(dialog.dialog_video)
@@ -141,7 +234,7 @@ class CustomDialog(context: Context) {
         dialog.window!!.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
         dialog.setCanceledOnTouchOutside(true)
         dialog.setCancelable(true)
-        dialog.dialog_text.setText(posture)
+//        dialog.dialog_text.setText(posture)
 
 
         dialog.show()
