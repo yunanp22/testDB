@@ -2,7 +2,9 @@ package org.tensorflow.lite.examples.poseestimation
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,7 @@ import kotlinx.android.synthetic.main.example_dialog.*
 import kotlinx.android.synthetic.main.fragment_history.*
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.android.synthetic.main.history_list_item.view.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -70,7 +73,7 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
             override fun onClick(v: View?) {
                 if(view.checkbox_favorite.isChecked){
                     firestore.collection("videolist")
-                        .whereEqualTo("uid", firebaseAuth.uid).orderBy("date")
+                        .whereEqualTo("uid", firebaseAuth.uid)
                         .get()
                         .addOnSuccessListener{
                             //videoID를 통해 구분해서 isFavorite 값 업데이트
@@ -83,8 +86,10 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
         // 연습목록 리스트 클릭시
         view.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                val dialog = CustomDialog(context)
-                dialog.myDialog(item.videoPath)
+                val intent = Intent(context, HistoryPopupActivity::class.java)
+                intent.putExtra("itemvideopath", item.videoPath)
+
+                context.startActivity(intent)
             }
         })
 
@@ -116,8 +121,9 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
     }
 }
 
-class CustomDialog(context: Context) {
+class CustomDialog(view: View, context: Context) {
     private val dialog = Dialog(context)
+    private val view = view
 
     //firebase Auth
     private lateinit var firebaseAuth: FirebaseAuth
@@ -147,11 +153,43 @@ class CustomDialog(context: Context) {
                 for(document in result) {
 
 
-                    if (document["videoPath"].toString().equals(videoPath) ) {
+                    if (document["videoPath"].toString() == videoPath ) {
                         uri = videoPath
                         Log.d("TAG", "myDialog: $uri")
+
+//                        dialog.dialog_video.setVideoURI(Uri.fromFile(File(
+//                            Environment.getExternalStoragePublicDirectory(
+//                                Environment.DIRECTORY_DCIM), "${uri}.mp4")))
+//
+//                        dialog.dialog_video.setOnPreparedListener {
+//                            val mediaController = MediaController(c)
+//                            mediaController.setAnchorView(dialog.dialog_video)
+//                            dialog.dialog_video.setMediaController(mediaController)
+//                            /*
+//                            m : MediaPlayer ->
+//                                m.setOnVideoSizeChangedListener { m : MediaPlayer?, width: Int, height: Int ->
+//
+//                                }
+//
+//                             */
+//
+//                        }
+//                        dialog.dialog_video.requestFocus()
+//                        dialog.dialog_video.start()
+                        val videoView: VideoView = dialog.findViewById(R.id.dialog_video)
+                        val mc = MediaController(dialog.context)
+//                val path = "android.resource://" + activity?.packageName + "/" + video
+                        videoView.setVideoURI(Uri.fromFile(File(
+                            Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DCIM), "${uri}.mp4")))
+                        mc.setAnchorView(videoView)
+                        videoView.setMediaController(mc)
+                        videoView.requestFocus()
+                        videoView.start()
                     }
                 }
+
+
 
 
 //                for(document in result){
@@ -212,23 +250,26 @@ class CustomDialog(context: Context) {
 
             }
 
-
-        dialog.dialog_video.setVideoPath(Uri.fromFile(uri))
-        dialog.dialog_video.setOnPreparedListener {
-            val mediaController = MediaController(c)
-            mediaController.setAnchorView(dialog.dialog_video)
-            dialog.dialog_video.setMediaController(mediaController)
-            /*
-            m : MediaPlayer ->
-                m.setOnVideoSizeChangedListener { m : MediaPlayer?, width: Int, height: Int ->
-
-                }
-
-             */
-
-        }
-        dialog.dialog_video.requestFocus()
-        dialog.dialog_video.start()
+        Log.d("TAG", "myDialog11: $uri")
+//        dialog.dialog_video.setVideoURI(Uri.fromFile(File(
+//            Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_DCIM), "${uri}.mp4")))
+//
+//        dialog.dialog_video.setOnPreparedListener {
+//            val mediaController = MediaController(c)
+//            mediaController.setAnchorView(dialog.dialog_video)
+//            dialog.dialog_video.setMediaController(mediaController)
+//            /*
+//            m : MediaPlayer ->
+//                m.setOnVideoSizeChangedListener { m : MediaPlayer?, width: Int, height: Int ->
+//
+//                }
+//
+//             */
+//
+//        }
+//        dialog.dialog_video.requestFocus()
+//        dialog.dialog_video.start()
 
 
         dialog.window!!.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)

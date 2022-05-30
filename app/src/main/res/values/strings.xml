@@ -16,4 +16,15 @@
         <item>팔로우스루</item>
 
     </string-array>
+
+    <string-array name="history_list">
+        <item>영상</item>
+        <item>어드레스</item>
+        <item>푸시어웨이</item>
+        <item>다운스윙</item>
+        <item>백스윙</item>
+        <item>포워드스윙</item>
+        <item>팔로우스루</item>
+
+    </string-array>
 </resources>

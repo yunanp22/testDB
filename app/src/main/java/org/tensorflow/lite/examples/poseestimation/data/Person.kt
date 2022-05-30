@@ -27,8 +27,8 @@ import kotlin.math.*
 @Parcelize
 data class Person(
     var id: Int = -1, // default id is -1
-    val keyPoints: List<KeyPoint>,
-    val boundingBox: RectF? = null, // Only MoveNet MultiPose return bounding box.
-    val score: Float
+    var keyPoints: List<KeyPoint>,
+    var boundingBox: RectF? = null, // Only MoveNet MultiPose return bounding box.
+    var score: Float
 ) : Parcelable
 

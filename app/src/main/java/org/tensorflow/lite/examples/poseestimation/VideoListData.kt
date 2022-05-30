@@ -1,6 +1,8 @@
 package org.tensorflow.lite.examples.poseestimation
 
 import android.graphics.Bitmap
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import org.tensorflow.lite.examples.poseestimation.data.Person
 
 data class VideoListData(
@@ -16,7 +18,7 @@ data class VideoListData(
     var backswingAngleDifference: List<Float?>? = null,
     var forwardswingAngleDifference: List<Float?>? = null,
     var followthroughAngleDifference: List<Float?>? = null,
-    var personList: List<Person?>? = null,
+    var bitmapOutputList: List<String?>? = null,
     var bitmapList: List<String?>? = null,
     val isFavorite : Boolean? = false
 )

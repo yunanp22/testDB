@@ -244,13 +244,18 @@ class RecordFragment : Fragment() {
         setInputSurface(surface)
     }
 
+    private lateinit var fileName: String
+
     /** Creates a [File] named with the current date and time */
     private fun createFile(context: Context, extension: String): File {
 
         val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
-        return File(
+        val now = sdf.format(Date())
+        val file = File(
             Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DCIM), "${sdf.format(Date())}.$extension")
+                Environment.DIRECTORY_DCIM), "${now}.$extension")
+        fileName = now
+        return file
 //            return  File(context.getExternalFilesDir(null), "VID_${sdf.format(Date())}.$extension")
     }
 
@@ -377,6 +382,8 @@ class RecordFragment : Fragment() {
                 intent.putExtra("backswingperson", backswingPerson)
                 intent.putExtra("forwardswingperson", forwardswingPerson)
                 intent.putExtra("followthroughperson", followthroughPerson)
+
+                intent.putExtra("filename", fileName)
 
                 startActivity(intent)
 

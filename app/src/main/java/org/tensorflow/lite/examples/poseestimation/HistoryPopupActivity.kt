@@ -1,7 +1,5 @@
 package org.tensorflow.lite.examples.poseestimation
 
-import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.*
 import android.icu.text.AlphabeticIndex
 import android.net.Uri
@@ -13,24 +11,24 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import kotlinx.android.synthetic.main.activity_resultpopup.*
 import org.tensorflow.lite.examples.poseestimation.data.Device
 import org.tensorflow.lite.examples.poseestimation.data.Person
 import org.tensorflow.lite.examples.poseestimation.ml.ModelType
 import org.tensorflow.lite.examples.poseestimation.ml.MoveNet
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ResultPopupActivity: AppCompatActivity() {
+class HistoryPopupActivity: AppCompatActivity() {
 
     private lateinit var spinner: Spinner
     private lateinit var okButton: Button
     private lateinit var comment: TextView
     private lateinit var imageView: ImageView
+    private lateinit var videoView: VideoView
     private lateinit var commentImageView: ImageView
     private lateinit var wrongAngleDifference1: TextView
     private lateinit var wrongAngleDifference2: TextView
@@ -40,7 +38,7 @@ class ResultPopupActivity: AppCompatActivity() {
     private lateinit var feedback: TextView
 
 
-    private lateinit var poseAngleDifferences: Array<FloatArray?>
+    private lateinit var poseAngleDifferences: Array<List<Float?>?>
 
     private var isTrackerEnabled = false
 
@@ -50,272 +48,303 @@ class ResultPopupActivity: AppCompatActivity() {
     //firebase firestore
     private lateinit var firestore: FirebaseFirestore
 
-    var addressOutputBitmap: Bitmap? = null
-    var pushawayOutputBitmap: Bitmap? = null
-    var downswingOutputBitmap: Bitmap? = null
-    var backswingOutputBitmap: Bitmap? = null
-    var forwardswingOutputBitmap: Bitmap? = null
-    var followthroughOutputBitmap: Bitmap? = null
+    var item: String? = null
+    var videoPath: String? = null
+    var scoreList: List<Float>? = null
+    var addressAngleDifference: List<Float?>? = null
+    var pushawayAngleDifference: List<Float?>? = null
+    var downswingAngleDifference: List<Float?>? = null
+    var backswingAngleDifference: List<Float?>? = null
+    var forwardswingAngleDifference: List<Float?>? = null
+    var followthroughAngleDifference: List<Float?>? = null
+    var bitmapOutputList: List<String?>? = null
+    var bitmapList: List<String?>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_resultpopup)
+        setContentView(R.layout.activity_historypopup)
 
-        spinner = findViewById(R.id.spinner)
-        okButton = findViewById(R.id.result_ok)
-        comment = findViewById<TextView>(R.id.result_comment)
-        commentImageView = findViewById(R.id.result_comment_image)
-        wrongAngleDifference1 = findViewById<TextView>(R.id.result_wrongAngle1)
-        wrongAngleDifference2 = findViewById<TextView>(R.id.result_wrongAngle2)
-        wrongAngleDifference3 = findViewById<TextView>(R.id.result_wrongAngle3)
-        wrongAngleDifference4 = findViewById<TextView>(R.id.result_wrongAngle4)
-        wrongAngleDifference5 = findViewById<TextView>(R.id.result_wrongAngle5)
-        feedback = findViewById<TextView>(R.id.feedback)
-        imageView = findViewById(R.id.result_posture_image)
+        spinner = findViewById(R.id.history_spinner)
+        okButton = findViewById(R.id.history_ok)
+        comment = findViewById<TextView>(R.id.history_comment)
+        commentImageView = findViewById(R.id.history_comment_image)
+        wrongAngleDifference1 = findViewById<TextView>(R.id.history_wrongAngle1)
+        wrongAngleDifference2 = findViewById<TextView>(R.id.history_wrongAngle2)
+        wrongAngleDifference3 = findViewById<TextView>(R.id.history_wrongAngle3)
+        wrongAngleDifference4 = findViewById<TextView>(R.id.history_wrongAngle4)
+        wrongAngleDifference5 = findViewById<TextView>(R.id.history_wrongAngle5)
+        feedback = findViewById<TextView>(R.id.history_feedback)
+        imageView = findViewById(R.id.history_posture_image)
+        videoView = findViewById(R.id.history_video)
 //        surfaceView = findViewById(R.id.result_posture_surface)
 
         // Create an ArrayAdapter
         val adapter = ArrayAdapter.createFromResource(this,
-            R.array.pose_list, android.R.layout.simple_spinner_item)
+            R.array.history_list, android.R.layout.simple_spinner_item)
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         // Apply the adapter to the spinner
         spinner.adapter = adapter
 
-        var score1 = intent.getFloatExtra("addressScore", 0.0f)
-        var score2 = intent.getFloatExtra("pushawayScore", 0.0f)
-        var score3 = intent.getFloatExtra("downswingScore", 0.0f)
-        var score4 = intent.getFloatExtra("backswingScore", 0.0f)
-        var score5 = intent.getFloatExtra("forwardswingScore", 0.0f)
-        var score6 = intent.getFloatExtra("followthroughScore", 0.0f)
+        item = intent.getStringExtra("itemvideopath")
 
-        var scoreList = listOf(score1, score2, score3, score4, score5, score6)
-        Log.d("TAG", "score1 : ${score1}")
 
-        var addressResultURI = intent.getStringExtra("addressuri")
-        var pushawayResultURI = intent.getStringExtra("pushawayuri")
-        var downswingResultURI = intent.getStringExtra("downswinguri")
-        var backswingResultURI = intent.getStringExtra("backswinguri")
-        var forwardswingResultURI = intent.getStringExtra("forwardswinguri")
-        var followthroughResultURI = intent.getStringExtra("followthroughuri")
-        Log.d("TAG", "addressResultURI : ${addressResultURI}")
-
-        var addressBitmap = BitmapFactory.decodeFile(addressResultURI)
-        var pushawayBitmap = BitmapFactory.decodeFile(pushawayResultURI)
-        var downswingBitmap = BitmapFactory.decodeFile(downswingResultURI)
-        var backswingBitmap = BitmapFactory.decodeFile(backswingResultURI)
-        var forwardswingBitmap = BitmapFactory.decodeFile(forwardswingResultURI)
-        var followthroughBitmap = BitmapFactory.decodeFile(followthroughResultURI)
-        Log.d("TAG", "addressBitmap : ${addressBitmap}")
-
-        var bitmapList = listOf(addressResultURI, pushawayResultURI, downswingResultURI, backswingResultURI, forwardswingResultURI, followthroughResultURI)
-
-        var addressAngleDifferences = intent.getFloatArrayExtra("addressAngleDifferences")
-        var pushawayAngleDifferences = intent.getFloatArrayExtra("pushawayAngleDifferences")
-        var downswingAngleDifferences = intent.getFloatArrayExtra("downswingAngleDifferences")
-        var backswingAngleDifferences = intent.getFloatArrayExtra("backswingAngleDifferences")
-        var forwardswingAngleDifferences = intent.getFloatArrayExtra("forwardswingAngleDifferences")
-        var followthroughAngleDifferences = intent.getFloatArrayExtra("followthroughAngleDifferences")
-        Log.d("TAG", "addressAngleDifferences : ${addressAngleDifferences}")
-
-        var addressPerson = intent.getParcelableExtra<Person>("addressperson")
-        var pushawayPerson = intent.getParcelableExtra<Person>("pushawayperson")
-        var downswingPerson = intent.getParcelableExtra<Person>("downswingperson")
-        var backswingPerson = intent.getParcelableExtra<Person>("backswingperson")
-        var forwardswingPerson = intent.getParcelableExtra<Person>("forwardswingperson")
-        var followthroughPerson = intent.getParcelableExtra<Person>("followthroughperson")
-
+//        var score1 = intent.getFloatExtra("addressScore", 0.0f)
+//        var score2 = intent.getFloatExtra("pushawayScore", 0.0f)
+//        var score3 = intent.getFloatExtra("downswingScore", 0.0f)
+//        var score4 = intent.getFloatExtra("backswingScore", 0.0f)
+//        var score5 = intent.getFloatExtra("forwardswingScore", 0.0f)
+//        var score6 = intent.getFloatExtra("followthroughScore", 0.0f)
+//
+//        var scoreList = listOf(score1, score2, score3, score4, score5, score6)
+//        Log.d("TAG", "score1 : ${score1}")
+//
+//        var addressResultURI = intent.getStringExtra("addressuri")
+//        var pushawayResultURI = intent.getStringExtra("pushawayuri")
+//        var downswingResultURI = intent.getStringExtra("downswinguri")
+//        var backswingResultURI = intent.getStringExtra("backswinguri")
+//        var forwardswingResultURI = intent.getStringExtra("forwardswinguri")
+//        var followthroughResultURI = intent.getStringExtra("followthroughuri")
+//        Log.d("TAG", "addressResultURI : ${addressResultURI}")
+//
+//        var addressBitmap = BitmapFactory.decodeFile(addressResultURI)
+//        var pushawayBitmap = BitmapFactory.decodeFile(pushawayResultURI)
+//        var downswingBitmap = BitmapFactory.decodeFile(downswingResultURI)
+//        var backswingBitmap = BitmapFactory.decodeFile(backswingResultURI)
+//        var forwardswingBitmap = BitmapFactory.decodeFile(forwardswingResultURI)
+//        var followthroughBitmap = BitmapFactory.decodeFile(followthroughResultURI)
+//        Log.d("TAG", "addressBitmap : ${addressBitmap}")
+//
+//        var bitmapList = listOf(addressResultURI, pushawayResultURI, downswingResultURI, backswingResultURI, forwardswingResultURI, followthroughResultURI)
+//
+//        var addressAngleDifferences = intent.getFloatArrayExtra("addressAngleDifferences")
+//        var pushawayAngleDifferences = intent.getFloatArrayExtra("pushawayAngleDifferences")
+//        var downswingAngleDifferences = intent.getFloatArrayExtra("downswingAngleDifferences")
+//        var backswingAngleDifferences = intent.getFloatArrayExtra("backswingAngleDifferences")
+//        var forwardswingAngleDifferences = intent.getFloatArrayExtra("forwardswingAngleDifferences")
+//        var followthroughAngleDifferences = intent.getFloatArrayExtra("followthroughAngleDifferences")
+//        Log.d("TAG", "addressAngleDifferences : ${addressAngleDifferences}")
+//
+//        var addressPerson = intent.getParcelableExtra<Person>("addressperson")
+//        var pushawayPerson = intent.getParcelableExtra<Person>("pushawayperson")
+//        var downswingPerson = intent.getParcelableExtra<Person>("downswingperson")
+//        var backswingPerson = intent.getParcelableExtra<Person>("backswingperson")
+//        var forwardswingPerson = intent.getParcelableExtra<Person>("forwardswingperson")
+//        var followthroughPerson = intent.getParcelableExtra<Person>("followthroughperson")
+//
 //        var personList = listOf(addressPerson, pushawayPerson, downswingPerson, backswingPerson, forwardswingPerson, followthroughPerson)
+//
+//        var fileName = intent.getStringExtra("filename")
+//
+//
+//        poseAngleDifferences = arrayOf(addressAngleDifferences, pushawayAngleDifferences,
+//            downswingAngleDifferences, backswingAngleDifferences, forwardswingAngleDifferences, followthroughAngleDifferences)
 
-        var fileName = intent.getStringExtra("filename")
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+//        Log.d("TAG", "myDialog: $videoPath")
+
+        val mc = MediaController(this@HistoryPopupActivity)
+        mc.setAnchorView(videoView)
+        videoView.setMediaController(mc)
+        videoView.setVideoURI(Uri.fromFile(File(
+            Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM), "${item}.mp4")))
 
 
-        poseAngleDifferences = arrayOf(addressAngleDifferences, pushawayAngleDifferences,
+//        var VideoList = arrayListOf<PostureListData>()
+        firestore.collection("videolist")
+            .whereEqualTo("uid", firebaseAuth.uid)
+            .get()
+            .addOnSuccessListener { result ->
+                Log.d("TAG", "myDialog: $result")
+
+
+
+                for(document in result) {
+
+                    if (document["videoPath"].toString() == item ) {
+                        videoPath = item
+                        scoreList = document["scoreList"] as List<Float>?
+                        Log.d("TAG", "onCreate: $scoreList")
+                        addressAngleDifference = document["addressAngleDifference"] as List<Float?>?
+                        pushawayAngleDifference = document["pushawayAngleDifference"] as List<Float?>?
+                        downswingAngleDifference = document["downswingAngleDifference"] as List<Float?>?
+                        backswingAngleDifference = document["backswingAngleDifference"] as List<Float?>?
+                        forwardswingAngleDifference = document["forwardswingAngleDifference"] as List<Float?>?
+                        followthroughAngleDifference = document["followthroughAngleDifference"] as List<Float?>?
+                        bitmapOutputList = document["bitmapOutputList"] as List<String?>?
+                        bitmapList = document["bitmapList"] as List<String?>?
+
+                        var addressBitmap = BitmapFactory.decodeFile(bitmapList!![0])
+                        var pushawayBitmap = BitmapFactory.decodeFile(bitmapList!![1])
+                        var downswingBitmap = BitmapFactory.decodeFile(bitmapList!![2])
+                        var backswingBitmap = BitmapFactory.decodeFile(bitmapList!![3])
+                        var forwardswingBitmap = BitmapFactory.decodeFile(bitmapList!![4])
+                        var followthroughBitmap = BitmapFactory.decodeFile(bitmapList!![5])
+
+                        var addressOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![0])
+                        var pushawayOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![1])
+                        var downswingOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![2])
+                        var backswingOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![3])
+                        var forwardswingOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![4])
+                        var followthroughOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![5])
+
+                        var addressAngleDifferences = addressAngleDifference
+                        var pushawayAngleDifferences = pushawayAngleDifference
+                        var downswingAngleDifferences = downswingAngleDifference
+                        var backswingAngleDifferences = backswingAngleDifference
+                        var forwardswingAngleDifferences = forwardswingAngleDifference
+                        var followthroughAngleDifferences = followthroughAngleDifference
+
+
+
+                        poseAngleDifferences = arrayOf(addressAngleDifferences, pushawayAngleDifferences,
             downswingAngleDifferences, backswingAngleDifferences, forwardswingAngleDifferences, followthroughAngleDifferences)
+//                        Log.d("TAG", "addressAngleDifferences : ${addressAngleDifferences}")
 
-        if(addressBitmap!= null) {
-            addressOutputBitmap = visualize(PoseType.ADDRESS, addressPerson!!, addressBitmap, poseAngleDifferences)
-        }
-        if(pushawayBitmap!= null) {
-            pushawayOutputBitmap = visualize(PoseType.PUSHAWAY, pushawayPerson!!, pushawayBitmap, poseAngleDifferences)
-        }
-        if(downswingBitmap!= null) {
-            downswingOutputBitmap = visualize(PoseType.DOWNSWING, downswingPerson!!, downswingBitmap, poseAngleDifferences)
-        }
-        if(backswingBitmap!=null) {
-            backswingOutputBitmap = visualize(PoseType.BACKSWING, backswingPerson!!, backswingBitmap, poseAngleDifferences)
-        }
-        if(forwardswingBitmap!=null) {
-            forwardswingOutputBitmap = visualize(PoseType.FORWARDSWING, forwardswingPerson!!, forwardswingBitmap, poseAngleDifferences)
-        }
-        if(followthroughBitmap!=null) {
-            followthroughOutputBitmap = visualize(PoseType.FOLLOWTHROUGH, followthroughPerson!!, followthroughBitmap, poseAngleDifferences)
-        }
+                            var addressPerson : Person? = null
 
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                override fun onNothingSelected(parent: AdapterView<*>?) {
+//                            addressPerson = Person(personList!![0]?.id!!, personList!![0]?.keyPoints!!,personList!![0]?.boundingBox,personList!![0]?.score!!)
+//                            Log.d("TAG", "onCreate: $addressPerson")
+//                            var pushawayPerson = personList!![1]
+//                            var downswingPerson = personList!![2]
+//                            var backswingPerson = personList!![3]
+//                            var forwardswingPerson = personList!![4]
+//                            var followthroughPerson = personList!![5]
 
-                }
 
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    wrongAngleDifference1.text = null
-                    wrongAngleDifference2.text = null
-                    wrongAngleDifference3.text = null
-                    wrongAngleDifference4.text = null
-                    wrongAngleDifference5.text = null
-                    feedback.text = null
-                    if (getSelectedSpinnerItem() == 0) {
-                        comment.text = "어드레스 점수: $score1"
 
-                        if(addressBitmap != null) {
-                            imageView.setImageBitmap(addressOutputBitmap)
-                            resultImage(score1)
-                            feedbackAddressAngleDiffernce(addressAngleDifferences!!)
-                        }  else {
-                            imageView.setImageResource(R.drawable.bowling)
+                        var addressScore = scoreList!![0]
+                        var pushawayScore = scoreList!![1]
+                        var downswingScore = scoreList!![2]
+                        var backswingScore = scoreList!![3]
+                        var forwardswingScore = scoreList!![4]
+                        var followthroughScore = scoreList!![5]
+
+                        var scores = arrayOf(addressScore, pushawayScore, downswingScore, backswingScore, forwardswingScore, followthroughScore)
+                        var avgScore = getAvgScore(scores)
+
+
+
+                        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                            }
+
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                wrongAngleDifference1.text = null
+                                wrongAngleDifference2.text = null
+                                wrongAngleDifference3.text = null
+                                wrongAngleDifference4.text = null
+                                wrongAngleDifference5.text = null
+                                feedback.text = null
+                                if (getSelectedSpinnerItem() == 0) {
+                                    videoView.visibility = View.VISIBLE
+                                    imageView.visibility = View.INVISIBLE
+
+                                    videoView.requestFocus()
+                                    videoView.start()
+
+                                    comment.text = "$avgScore"
+
+                                } else if (getSelectedSpinnerItem() == 1) {
+                                    videoView.visibility = View.INVISIBLE
+                                    imageView.visibility = View.VISIBLE
+
+                                    if(addressOutputBitmap != null) {
+                                        imageView.setImageBitmap(addressOutputBitmap)
+                                        resultImage(addressScore)
+
+                                    }  else {
+                                        imageView.setImageResource(R.drawable.bowling)
+                                    }
+
+                                } else if (getSelectedSpinnerItem() == 2) {
+                                    videoView.visibility = View.INVISIBLE
+                                    imageView.visibility = View.VISIBLE
+
+                                    if(pushawayOutputBitmap != null) {
+                                        imageView.setImageBitmap(pushawayOutputBitmap)
+                                    } else {
+                                        imageView.setImageResource(R.drawable.bowling)
+                                    }
+
+                                } else if (getSelectedSpinnerItem() == 3) {
+                                    videoView.visibility = View.INVISIBLE
+                                    imageView.visibility = View.VISIBLE
+
+                                    if(downswingOutputBitmap != null) {
+                                        imageView.setImageBitmap(downswingOutputBitmap)
+                                    } else {
+                                        imageView.setImageResource(R.drawable.bowling)
+                                    }
+                                } else if (getSelectedSpinnerItem() == 4) {
+                                    videoView.visibility = View.INVISIBLE
+                                    imageView.visibility = View.VISIBLE
+
+                                    if(backswingOutputBitmap != null) {
+                                        imageView.setImageBitmap(backswingOutputBitmap)
+                                    } else {
+                                        imageView.setImageResource(R.drawable.bowling)
+                                    }
+                                } else if(getSelectedSpinnerItem() == 5) {
+                                    videoView.visibility = View.INVISIBLE
+                                    imageView.visibility = View.VISIBLE
+
+                                    if(forwardswingOutputBitmap != null) {
+                                        imageView.setImageBitmap(forwardswingOutputBitmap)
+                                    } else {
+                                        imageView.setImageResource(R.drawable.bowling)
+                                    }
+                                } else {
+                                    videoView.visibility = View.INVISIBLE
+                                    imageView.visibility = View.VISIBLE
+
+                                    if(followthroughOutputBitmap != null) {
+                                        imageView.setImageBitmap(followthroughOutputBitmap)
+                                    } else {
+                                        imageView.setImageResource(R.drawable.bowling)
+                                    }
+                                }
+                            }
                         }
 
-                    } else if (getSelectedSpinnerItem() == 1) {
-                        comment.text = "푸쉬어웨이 점수: $score2"
-
-                        if(pushawayBitmap != null) {
-                            resultImage(score2)
-                            imageView.setImageBitmap(pushawayOutputBitmap)
-                            feedbackPushAngleDiffernce(pushawayAngleDifferences!!)
-                        } else {
-                            imageView.setImageResource(R.drawable.bowling)
-                        }
-                    } else if (getSelectedSpinnerItem() == 2) {
-                        comment.text = "다운스윙 점수: $score3"
-
-                        if(downswingBitmap != null) {
-                            imageView.setImageBitmap(downswingOutputBitmap)
-                            resultImage(score3)
-                            feedbackDownAngleDiffernce(downswingAngleDifferences!!)
-                        } else {
-                            imageView.setImageResource(R.drawable.bowling)
-                        }
-                    } else if (getSelectedSpinnerItem() == 3) {
-                        comment.text = "백스윙 점수: $score4"
-
-                        if(backswingBitmap != null) {
-                            imageView.setImageBitmap(backswingOutputBitmap)
-                            resultImage(score4)
-                            feedbackBackAngleDiffernce(backswingAngleDifferences!!)
-                        } else {
-                            imageView.setImageResource(R.drawable.bowling)
-                        }
-                    } else if (getSelectedSpinnerItem() == 4) {
-                        comment.text = "포워드 점수: $score5"
-                        if(forwardswingBitmap != null) {
-                            imageView.setImageBitmap(forwardswingOutputBitmap)
-                            resultImage(score5)
-                            feedbackForwardAngleDiffernce(forwardswingAngleDifferences!!)
-                        } else {
-                            imageView.setImageResource(R.drawable.bowling)
-                        }
-                    } else {
-                        comment.text = "팔로우스루 점수: $score6"
-                        if(followthroughBitmap != null) {
-                            imageView.setImageBitmap(followthroughOutputBitmap)
-                            resultImage(score6)
-                            feedbackFollowAngleDiffernce(followthroughAngleDifferences!!)
-                        } else {
-                            imageView.setImageResource(R.drawable.bowling)
+                        okButton.setOnClickListener {
+                            finish()
                         }
                     }
                 }
+
+            }
+            .addOnFailureListener { exception ->
+
             }
 
-            okButton.setOnClickListener {
-
-                //문서 업데이트
-                firebaseAuth = FirebaseAuth.getInstance()
-                firestore = FirebaseFirestore.getInstance()
-
-                var videoList = VideoListData()
-                videoList.uid = firebaseAuth?.currentUser?.uid
-
-//                 videoList.videoID = 비디오구분 아이디 String
-//                 videoList.feedback = 피드백 내용 String
-//                 videoList.score = 점수 Int
-//                val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
-//                var path = Uri.fromFile(File(
-//                    Environment.getExternalStoragePublicDirectory(
-//                        Environment.DIRECTORY_DCIM), ).toString()
-
-                var addressOutputURI = saveBitmapAsFile(PoseType.ADDRESS, addressOutputBitmap).toString()
-                var pushawayOutputURI = saveBitmapAsFile(PoseType.PUSHAWAY, pushawayOutputBitmap).toString()
-                var downswingOutputURI = saveBitmapAsFile(PoseType.DOWNSWING, downswingOutputBitmap).toString()
-                var backswingOutputURI = saveBitmapAsFile(PoseType.BACKSWING, backswingOutputBitmap).toString()
-                var forwardswingOutputURI = saveBitmapAsFile(PoseType.FORWARDSWING, forwardswingOutputBitmap).toString()
-                var followthroughOutputURI = saveBitmapAsFile(PoseType.FOLLOWTHROUGH, followthroughOutputBitmap).toString()
-
-                var bitmapOutputList = listOf(addressOutputURI, pushawayOutputURI, downswingOutputURI, backswingOutputURI, forwardswingOutputURI, followthroughOutputURI)
-
-                videoList.videoPath = fileName
-//
-                videoList.scoreList = scoreList
-                videoList.addressAngleDifference = addressAngleDifferences?.toList()
-                videoList.pushawayAngleDifference = pushawayAngleDifferences?.toList()
-                videoList.downswingAngleDifference = downswingAngleDifferences?.toList()
-                videoList.backswingAngleDifference = backswingAngleDifferences?.toList()
-                videoList.forwardswingAngleDifference = forwardswingAngleDifferences?.toList()
-                videoList.followthroughAngleDifference = followthroughAngleDifferences?.toList()
-                videoList.bitmapOutputList = bitmapOutputList
-                videoList.bitmapList = bitmapList
-//                videoList.bitmapList = bitmapList
-
-                firestore?.collection("videolist").add(videoList)
-
-                RecordFragment.resetRecordedInfo()
-                MoveNet.resetInfo()
-
-                finish()
-            }
         }
 
     override fun onDestroy() {
-        RecordFragment.resetRecordedInfo()
-        MoveNet.resetInfo()
         super.onDestroy()
     }
 
-    private fun saveBitmapAsFile(pose: PoseType, bitmap: Bitmap?): Uri? {
+    fun getAvgScore(array: Array<Float>):Float{
+        var sum = 0.0f
+        var count = 0
+        for(i in 0 until array.size){
+            if(array[i]!=0.0f) {
+                sum += array[i]
+                count = i + 1
+            }
 
-        val wrapper = ContextWrapper(this.applicationContext)
-
-//        val path = File(safeContext.externalCacheDir, "image")
-//        if(!path.exists()){
-//            path.mkdirs()
-//        }
-//        var path = Environment.getExternalStoragePublicDirectory(
-//            Environment.DIRECTORY_PICTURES)
-
-        val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
-//        var path = Uri.fromFile(File(
-//            Environment.getExternalStoragePublicDirectory(
-//                Environment.DIRECTORY_DCIM), "VID_.mp4")).toString()
-
-        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file, "${sdf.format(Date())}${pose.pose}.jpg")
-//        var imageFile: OutputStream? = null
-        try{
-            val stream: OutputStream = FileOutputStream(file)
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            stream.flush()
-            stream.close()
-        }catch (e: Exception){
-            null
-//            e.message
         }
-
-        return Uri.parse(file.absolutePath)
+        return sum/count
     }
 
-    private fun visualize(pose: PoseType, persons: Person, bitmap: Bitmap, array: Array<FloatArray?>): Bitmap {
+    private fun visualize(pose: PoseType, persons: Person, bitmap: Bitmap, array: Array<List<Float?>?>): Bitmap {
 
-        val outputBitmap = VisualizationUtils.drawBodyKeypointsByScore(
+        val outputBitmap = VisualizationUtils.drawBodyKeypointsByScoreInHistory(
             pose,
             array,
             bitmap,
@@ -340,31 +369,31 @@ class ResultPopupActivity: AppCompatActivity() {
         }
     }
 
-    fun feedbackAddressAngleDiffernce(addressAngleDifferences: FloatArray) {
+    fun feedbackAddressAngleDiffernce(addressAngleDifferences: List<Float?>) {
         wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${addressAngleDifferences[0]}"
         wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${addressAngleDifferences[1]}"
         wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${addressAngleDifferences[2]}"
         wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${addressAngleDifferences[3]}"
-        if (addressAngleDifferences!![0] >= 10.0) {
+        if (addressAngleDifferences[0]!! >= 10.0) {
             feedback.text = "오른쪽 팔꿈치가 많이 벌어졌네요! 팔을 90도로 만들어서 팔꿈치를 옆구리에 딱 붙여주세요!\n"
-        }else if (addressAngleDifferences!![0] <= -10.0) {
+        }else if (addressAngleDifferences[0]!! <= -10.0) {
             feedback.text = "오른쪽 팔꿈치가 많이 좁네요! 팔을 90도로 만들어서 팔꿈치를 옆구리에 딱 붙여주세요!\n"
         }
 
-        if (addressAngleDifferences!![1] >= 10.0) {
+        if (addressAngleDifferences[1]!! >= 10.0) {
             feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 벌어졌네요! 각도를 조금 줄여주세요!\n"
-        }else if(addressAngleDifferences[1] <= -10.0) {
+        }else if(addressAngleDifferences[1]!! <= -10.0) {
             feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 좁네요! 각도를 조금 벌려주세요!\n"
         }
 
-        if (addressAngleDifferences!![2] >= 10.0) {
+        if (addressAngleDifferences[2]!! >= 10.0) {
             feedback.text = "${feedback.text}오른쪽 골반 각도가 많이 벌어졌네요! 각도를 조금 줄여주세요!\n"
-        }else if(addressAngleDifferences[2] <= -10.0) {
+        }else if(addressAngleDifferences[2]!! <= -10.0) {
             feedback.text = "${feedback.text}오른쪽 골반 각도가 많이 좁네요! 각도를 조금 벌려주세요!\n"
         }
-        if (addressAngleDifferences!![3] >= 10.0) {
+        if (addressAngleDifferences[3]!! >= 10.0) {
             feedback.text = "${feedback.text}오른쪽 무릎 각도가 많이 벌어졌네요! 각도를 조금 줄여주세요!\n"
-        }else if(addressAngleDifferences[3] <= -10.0) {
+        }else if(addressAngleDifferences[3]!! <= -10.0) {
             feedback.text = "${feedback.text}오른쪽 무릎 각도가 많이 좁네요! 각도를 조금 벌려주세요!\n"
         }
         if(feedback.text == null){

@@ -37,6 +37,8 @@
             android:name=".MainActivity" />
         <activity
             android:name=".ResultPopupActivity"/>
+        <activity
+            android:name=".HistoryPopupActivity"/>
         <!-- FileProvider used to share media with other apps -->
         <provider
             android:name="androidx.core.content.FileProvider"

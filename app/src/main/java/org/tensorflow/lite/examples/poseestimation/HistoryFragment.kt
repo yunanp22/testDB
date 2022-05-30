@@ -85,7 +85,7 @@ class HistoryFragment : Fragment() {
                         document["backswingAngleDifference"] as List<Float?>?,
                         document["forwardswingAngleDifference"] as List<Float?>?,
                         document["followthroughAngleDifference"] as List<Float?>?,
-                        document["personList"] as List<Person?>?,
+                        document["bitmapOutputList"] as List<String?>?,
                         document["bitmapList"] as List<String?>?,
                         document["isFavorite"] as Boolean?
                     )
@@ -203,7 +203,7 @@ class HistoryFragment : Fragment() {
                                             document["backswingAngleDifference"] as List<Float?>?,
                                             document["forwardswingAngleDifference"] as List<Float?>?,
                                             document["followthroughAngleDifference"] as List<Float?>?,
-                                            document["personList"] as List<Person?>?,
+                                            document["bitmapOutputList"] as List<String?>?,
                                             document["bitmapList"] as List<String?>?,
                                             document["isFavorite"] as Boolean?
                                         )
@@ -279,7 +279,7 @@ class HistoryFragment : Fragment() {
                                                 document["backswingAngleDifference"] as List<Float?>?,
                                                 document["forwardswingAngleDifference"] as List<Float?>?,
                                                 document["followthroughAngleDifference"] as List<Float?>?,
-                                                document["personList"] as List<Person?>?,
+                                                document["bitmapOutputList"] as List<String?>?,
                                                 document["bitmapList"] as List<String?>?,
                                                 document["isFavorite"] as Boolean?
                                             )
