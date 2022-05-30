@@ -45,8 +45,18 @@
                 app:layout_constraintStart_toEndOf="@+id/posturePhotoImg"
                 app:layout_constraintTop_toTopOf="@+id/posturePhotoImg"
                 android:text="posture_number"/>
+            <View
+                android:id="@+id/anchor_menu"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="right"
+                app:layout_constraintStart_toStartOf="@+id/posture_number"
+                app:layout_constraintTop_toBottomOf="@+id/posture_number"
+                />
 
-<!--            <TextView-->
+
+            <!--            <TextView-->
 <!--                android:id="@+id/date"-->
 <!--                android:layout_width="wrap_content"-->
 <!--                android:layout_height="wrap_content"-->

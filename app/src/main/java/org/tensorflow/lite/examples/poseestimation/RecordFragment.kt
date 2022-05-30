@@ -76,9 +76,6 @@ enum class PoseType(val pose: String) {
 
 class RecordFragment : Fragment() {
 
-
-
-
     companion object {
         private const val REQUEST_CODE_PERMISSIONS = 10
         private const val TAG = "Main"

@@ -207,15 +207,6 @@ class HistoryPopupActivity: AppCompatActivity() {
 
                             var addressPerson : Person? = null
 
-//                            addressPerson = Person(personList!![0]?.id!!, personList!![0]?.keyPoints!!,personList!![0]?.boundingBox,personList!![0]?.score!!)
-//                            Log.d("TAG", "onCreate: $addressPerson")
-//                            var pushawayPerson = personList!![1]
-//                            var downswingPerson = personList!![2]
-//                            var backswingPerson = personList!![3]
-//                            var forwardswingPerson = personList!![4]
-//                            var followthroughPerson = personList!![5]
-
-
 
                         var addressScore = scoreList!![0]
                         var pushawayScore = scoreList!![1]

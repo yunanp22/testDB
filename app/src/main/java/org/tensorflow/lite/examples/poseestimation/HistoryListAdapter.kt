@@ -4,14 +4,11 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.*
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.example_dialog.*
@@ -19,9 +16,8 @@ import kotlinx.android.synthetic.main.fragment_history.*
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.android.synthetic.main.history_list_item.view.*
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoListData>) : BaseAdapter() {
 
@@ -47,6 +43,9 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
 //            holder.view_text2 = view.findViewById(R.id.date)
 //            holder.view_text3 = view.findViewById(R.id.correct_score)
             holder.view_favorite = view.findViewById(R.id.checkbox_favorite)
+            holder.view_anchor = view.findViewById(R.id.anchor_menu)
+
+
 
             view.tag = holder
         } else {
@@ -54,7 +53,10 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
             view = convertView
         }
 
+
         val item = VideoList[position]
+
+
 //        val resourceId = context.resources.getIdentifier(item.image, "drawable", context.packageName)
 
         holder.view_image1?.setImageResource(R.drawable.bowling)
@@ -68,6 +70,43 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
             holder.view_favorite?.isChecked = isChecked
         }
 
+        val contextThemeWrapper = ContextThemeWrapper(context, R.style.PopupMenuOverlapAnchor)
+        val popup = PopupMenu(contextThemeWrapper, holder.view_anchor, Gravity.NO_GRAVITY)
+        popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            popup.setForceShowIcon(true)
+        }
+        popup.setOnMenuItemClickListener { i ->
+            when(i.itemId) {
+                R.id.menu_delete -> {
+                    VideoList.removeAt(position)
+                    notifyDataSetChanged()
+                    firestore.collection("videolist")
+                        .whereEqualTo("uid", firebaseAuth.uid)
+                        .get()
+                        .addOnSuccessListener{ result ->
+                            for(document in result){
+                                if(document["videoPath"].toString() == item.videoPath ){
+                                    document.reference.delete()
+                                }
+                            }
+                        }
+                }
+
+
+
+            }
+            false
+
+        }
+
+        view.setOnLongClickListener((object : View.OnLongClickListener {
+            override fun onLongClick(p0: View?): Boolean {
+
+                popup.show()
+                return true
+            }
+        }))
         // 하트 즐겨찾기 체크 박스 클릭시
         view.checkbox_favorite.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
@@ -122,6 +161,7 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
             }
         })
 
+
         return view
     }
 
@@ -147,7 +187,10 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
         var view_text2 : TextView? = null
         var view_text3 : TextView? = null
         var view_favorite : CheckBox? = null
+        var view_anchor : View? = null
     }
+
+
 }
 
 class CustomDialog(view: View, context: Context) {

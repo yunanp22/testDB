@@ -1,22 +1,19 @@
 package org.tensorflow.lite.examples.poseestimation
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
+import android.view.*
+import android.widget.AdapterView.OnItemLongClickListener
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.custom_dialog_age.*
 import kotlinx.android.synthetic.main.fragment_history.*
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.android.synthetic.main.history_list_item.*
-import org.tensorflow.lite.examples.poseestimation.data.Person
-import java.text.SimpleDateFormat
 import java.util.*
+
 
 class HistoryFragment : Fragment() {
 
@@ -58,6 +55,7 @@ class HistoryFragment : Fragment() {
         var VideoList = arrayListOf<VideoListData>()
         firestore.collection("videolist")
             .whereEqualTo("uid", firebaseAuth.uid)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 for(document in result){
@@ -75,6 +73,7 @@ class HistoryFragment : Fragment() {
 //                    val strDate = dateFormat.format(date).toString()
                     VideoList.add(
                         VideoListData(
+                            document["createAt"] as Date?,
                         document["uid"].toString(),
                         document["videoPath"].toString(),
                         0.0f,
@@ -153,6 +152,8 @@ class HistoryFragment : Fragment() {
 
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -175,6 +176,7 @@ class HistoryFragment : Fragment() {
 
                         var VideoList = arrayListOf<VideoListData>()
                         firestore.collection("videolist")
+                            .orderBy("createdAt", Query.Direction.DESCENDING)
                             .whereEqualTo("uid", firebaseAuth.uid)
                             .get()
                             .addOnSuccessListener { result ->
@@ -192,6 +194,7 @@ class HistoryFragment : Fragment() {
 
                                     VideoList.add(
                                         VideoListData(
+                                            document["createAt"] as Date?,
                                             document["uid"].toString(),
                                             document["videoPath"].toString(),
                                             0.0f,
@@ -241,12 +244,14 @@ class HistoryFragment : Fragment() {
                                 val list_adapter = HistoryListAdapter(requireContext(), VideoList)
                                 view.listview_history.adapter = list_adapter
 
+
+
                             }
                             .addOnFailureListener { exception ->
 
                             }
 
-                        Toast.makeText(context, "잘했어", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context, "잘했어", Toast.LENGTH_SHORT).show()
                     }
 
                     1 -> {
@@ -257,6 +262,7 @@ class HistoryFragment : Fragment() {
 
                         var VideoList = arrayListOf<VideoListData>()
                         firestore.collection("videolist")
+                            .orderBy("createdAt", Query.Direction.DESCENDING)
                             .whereEqualTo("uid", firebaseAuth.uid)
                             .get()
                             .addOnSuccessListener { result ->
@@ -268,6 +274,7 @@ class HistoryFragment : Fragment() {
 
                                         VideoList.add(
                                             VideoListData(
+                                                document["createAt"] as Date?,
                                                 document["uid"].toString(),
                                                 document["videoPath"].toString(),
                                                 0.0f,
@@ -290,15 +297,20 @@ class HistoryFragment : Fragment() {
                                 val list_adapter = HistoryListAdapter(requireContext(), VideoList)
                                 view.listview_history.adapter = list_adapter
 
+
+
+
                             }
                             .addOnFailureListener { exception ->
 
                             }
-                        Toast.makeText(context, "no", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context, "no", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
 
+
         })
+
     }
 }

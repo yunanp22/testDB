@@ -26,17 +26,7 @@
             android:textColor="@color/black">
 
         </TextView>
-        <ImageButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:background="@drawable/drawable_history_more"
-            android:layout_gravity="center"
-            android:scaleType="fitCenter"
-            android:layout_marginLeft="20dp"
-            >
 
-        </ImageButton>
 
     </LinearLayout>
 
@@ -82,9 +72,9 @@
                 <ListView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/listview_history">
+                    android:id="@+id/listview_history"/>
 
-                </ListView>
+
 
             </LinearLayout>
         </ScrollView>
