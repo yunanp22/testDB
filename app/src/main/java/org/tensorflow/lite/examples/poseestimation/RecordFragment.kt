@@ -108,6 +108,8 @@ class RecordFragment : Fragment() {
         private var backswingScore: Float = 0.0f
         private var forwardswingScore: Float = 0.0f
         private var followthroughScore: Float = 0.0f
+        private var scores = arrayOf(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)
+        private var avgScore = 0.0f
 //    private var poseScoreList : ArrayList<Float> = arrayListOf(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)
 
         /** 자세별 각도 차이*/
@@ -184,6 +186,17 @@ class RecordFragment : Fragment() {
                 array[i] = 0.0f
         }
 
+        fun getAvgScore(array: Array<Float>):Float{
+            var sum = 0.0f
+            var count = 1
+            for(i in 0 until array.size){
+                if(array[i] != 0.0f)
+                    sum += array[i]
+                count++
+            }
+            return sum/count
+        }
+
     }
 
 
@@ -195,9 +208,9 @@ class RecordFragment : Fragment() {
     var time = 0
 
     private lateinit var imgPose: ImageView
-    private lateinit var tvScore: TextView
+//    private lateinit var tvScore: TextView
     private lateinit var tvTime: TextView
-    private lateinit var tvFPS: TextView
+//    private lateinit var tvFPS: TextView
     private lateinit var tvPoseName: TextView
     private var cameraSource: CameraSource? = null
     private val requestPermissionLauncher =
@@ -297,9 +310,9 @@ class RecordFragment : Fragment() {
 
         // keep screen on while app is running
 //        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        tvScore = view.rootView.findViewById(R.id.tvScore)
+//        tvScore = view.rootView.findViewById(R.id.tvScore)
         tvTime =  view.rootView.findViewById(R.id.tvTime)
-        tvFPS =  view.rootView.findViewById(R.id.tvFps)
+//        tvFPS =  view.rootView.findViewById(R.id.tvFps)
         tvPoseName =  view.rootView.findViewById(R.id.tvPoseName)
         surfaceView =  view.rootView.findViewById(R.id.surfaceView)
         imgPose =  view.rootView.findViewById(R.id.imgPose)
@@ -342,6 +355,7 @@ class RecordFragment : Fragment() {
                 intent.putExtra("backswingScore", backswingScore)
                 intent.putExtra("forwardswingScore", forwardswingScore)
                 intent.putExtra("followthroughScore", followthroughScore)
+                intent.putExtra("avgScore", avgScore)
 
                 intent.putExtra("addressAngleDifferences", addressAngleDifferences)
                 intent.putExtra("pushawayAngleDifferences", pushawayAngleDifferences)
@@ -454,6 +468,9 @@ class RecordFragment : Fragment() {
                             imgPose.setImageResource(R.drawable.pose2)
                             imgPose.visibility = View.VISIBLE
                             tvPoseName.text = getString(R.string.tv_poseName, "푸시어웨이")
+                            scores[0] = addressScore
+                            avgScore = getAvgScore(scores)
+                            Log.d("AVGScore", "test1 : " + avgScore)
                         }
 
                         if(sec == 9){
@@ -486,6 +503,9 @@ class RecordFragment : Fragment() {
                             imgPose.setImageResource(R.drawable.pose3)
                             imgPose.visibility = View.VISIBLE
                             tvPoseName.text = getString(R.string.tv_poseName, "다운스윙")
+                            scores[1] = pushawayScore
+                            avgScore = getAvgScore(scores)
+                            Log.d("AVGScore", "test2 : " + avgScore)
                         }
 
                         if(sec == 16){
@@ -518,6 +538,9 @@ class RecordFragment : Fragment() {
                             imgPose.setImageResource(R.drawable.pose4)
                             imgPose.visibility = View.VISIBLE
                             tvPoseName.text = getString(R.string.tv_poseName, "백스윙")
+                            scores[2] = downswingScore
+                            avgScore = getAvgScore(scores)
+                            Log.d("AVGScore", "test3 : " + avgScore)
                         }
 
                         if(sec == 23){
@@ -550,6 +573,9 @@ class RecordFragment : Fragment() {
                             imgPose.setImageResource(R.drawable.pose5)
                             imgPose.visibility = View.VISIBLE
                             tvPoseName.text = getString(R.string.tv_poseName, "포워드스윙")
+                            scores[3] = backswingScore
+                            avgScore = getAvgScore(scores)
+                            Log.d("AVGScore", "test4 : " + avgScore)
                         }
 
                         if(sec == 30){
@@ -582,6 +608,9 @@ class RecordFragment : Fragment() {
                             imgPose.setImageResource(R.drawable.pose6)
                             imgPose.visibility = View.VISIBLE
                             tvPoseName.text = getString(R.string.tv_poseName, "팔로스루")
+                            scores[4] = forwardswingScore
+                            avgScore = getAvgScore(scores)
+                            Log.d("AVGScore", "test5 : " + avgScore)
                         }
 
                         if(sec == 37){
@@ -611,6 +640,9 @@ class RecordFragment : Fragment() {
                             followthroughAngleDifferences[4] = getAngleDifference(pose_followthrough.getLKA(), MoveNet.getLeftKneeAngles()[4][maxScoreIndex])
 
                             end?.start()
+                            scores[5] = followthroughScore
+                            avgScore = getAvgScore(scores)
+                            Log.d("AVGScore", "test6 : " + avgScore)
                         }
                     }
                 }
@@ -780,7 +812,7 @@ class RecordFragment : Fragment() {
 //                            }
 
                         override fun onTimeListener(time: Int) {
-                            tvFPS.text = getString(R.string.tv_time, time)
+//                            tvFPS.text = getString(R.string.tv_time, time)
                         }
 
                         override fun onDetectedInfo(
@@ -788,8 +820,8 @@ class RecordFragment : Fragment() {
                             poseLabels: List<Pair<String, Float>>?
 
                         ) {
-                            tvScore.text =
-                                getString(R.string.tv_score, personScore ?: 0f)
+//                            tvScore.text =
+//                                getString(R.string.tv_score, personScore ?: 0f)
 //
                         }
 

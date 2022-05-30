@@ -25,31 +25,38 @@
         android:contentDescription="@null"
         android:src="@drawable/icn_chevron_up" />
 
-    <TextView
-        android:id="@+id/tvFps"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30dp"/>
+<!--    <TextView-->
+<!--        android:id="@+id/tvFps"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="30dp"/>-->
 
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_gravity="right"
+        android:layout_marginRight="16dp"
+        android:textSize="16dp"/>
 
     <TextView
         android:id="@+id/tvPoseName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tv_poseName"
-        android:textSize="30dp"/>
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:textSize="32dp"
+        android:layout_weight="2"/>
 
-    <TextView
-        android:id="@+id/tvScore"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30dp"/>
+<!--    <TextView-->
+<!--        android:id="@+id/tvScore"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="30dp"/>-->
 
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
