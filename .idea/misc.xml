@@ -5,6 +5,10 @@
       <map>
         <entry key="..\:/Users/yee95/Desktop/examples-master1/examples-master/lite/examples/pose_estimation/android/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/yee95/Desktop/examples-master1/examples-master/lite/examples/pose_estimation/android/app/src/main/res/layout/bottom_sheet_layout.xml" value="0.1" />
+        <entry key="..\:/dev/testDB/app/src/main/res/layout/activity_historypopup.xml" value="0.16337386018237082" />
+        <entry key="..\:/dev/testDB/app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="..\:/dev/testDB/app/src/main/res/layout/fragment_posture_video.xml" value="0.1" />
+        <entry key="..\:/dev/testDB/app/src/main/res/layout/fragment_practice_list.xml" value="0.1" />
         <entry key="..\:/dev/testDB/app/src/main/res/layout/fragment_settings.xml" value="0.13177083333333334" />
         <entry key="..\:/dev/testDB/app/src/main/res/layout/history_list_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_historypopup.xml" value="0.28229166666666666" />

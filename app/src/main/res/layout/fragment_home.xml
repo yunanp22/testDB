@@ -240,14 +240,14 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/home_grip_button"
+            android:id="@+id/home_posture_button"
             android:layout_width="280dp"
             android:layout_height="60dp"
             android:layout_marginTop="32dp"
             android:backgroundTint="#2E68FF"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:text="다양한 그립방식"
+            android:text="기본 자세 배우기"
             android:textSize="16sp"
             app:cornerRadius="5dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -255,33 +255,33 @@
             app:layout_constraintTop_toBottomOf="@+id/card_view" />
 
         <Button
-            android:id="@+id/home_posture_button"
+            android:id="@+id/home_start_button"
             android:layout_width="280dp"
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="#2E68FF"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:text="기본 자세 배우기"
+            android:text="자세 촬영"
             android:textSize="16sp"
             app:cornerRadius="5dp"
             app:iconTint="@color/blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_grip_button" />
+            app:layout_constraintTop_toBottomOf="@+id/home_posture_button" />
 
         <TextView
             android:id="@+id/carousel_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="최근 본 영상"
+            android:text="강의 영상"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/intro_text"
-            app:layout_constraintTop_toBottomOf="@+id/home_posture_button" />
+            app:layout_constraintTop_toBottomOf="@+id/home_start_button" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewpager"

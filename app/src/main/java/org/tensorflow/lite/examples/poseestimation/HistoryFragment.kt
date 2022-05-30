@@ -87,7 +87,7 @@ class HistoryFragment : Fragment() {
                         document["followthroughAngleDifference"] as List<Float?>?,
                         document["bitmapOutputList"] as List<String?>?,
                         document["bitmapList"] as List<String?>?,
-                        document["isFavorite"] as Boolean?
+                        document["favorite"] as Boolean
                     )
                     )
                 }
@@ -175,22 +175,21 @@ class HistoryFragment : Fragment() {
 
                         var VideoList = arrayListOf<VideoListData>()
                         firestore.collection("videolist")
-                            .whereEqualTo("uid", firebaseAuth.uid).orderBy("date")
+                            .whereEqualTo("uid", firebaseAuth.uid)
                             .get()
                             .addOnSuccessListener { result ->
                                 for(document in result){
 
                                     // 평균 점수 불러오기
                                     var a = document["score"].toString()
-                                    var c : Int = a.toInt()
+                                    var b : Float = a.toFloat()
+                                    var c : Int = b.toInt()
                                     sum += c
                                     count++
                                     recentScore = c
 
                                     // 기록 불러오기
-                                    val date = document["date"]
-                                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale("ko", "KR"))
-                                    val strDate = dateFormat.format(date).toString()
+
                                     VideoList.add(
                                         VideoListData(
                                             document["uid"].toString(),
@@ -205,7 +204,7 @@ class HistoryFragment : Fragment() {
                                             document["followthroughAngleDifference"] as List<Float?>?,
                                             document["bitmapOutputList"] as List<String?>?,
                                             document["bitmapList"] as List<String?>?,
-                                            document["isFavorite"] as Boolean?
+                                            document["favorite"] as Boolean
                                         )
                                     )
 
@@ -258,7 +257,7 @@ class HistoryFragment : Fragment() {
 
                         var VideoList = arrayListOf<VideoListData>()
                         firestore.collection("videolist")
-                            .whereEqualTo("uid", firebaseAuth.uid).orderBy("date")
+                            .whereEqualTo("uid", firebaseAuth.uid)
                             .get()
                             .addOnSuccessListener { result ->
                                 for(document in result){
@@ -281,7 +280,7 @@ class HistoryFragment : Fragment() {
                                                 document["followthroughAngleDifference"] as List<Float?>?,
                                                 document["bitmapOutputList"] as List<String?>?,
                                                 document["bitmapList"] as List<String?>?,
-                                                document["isFavorite"] as Boolean?
+                                                document["favorite"] as Boolean
                                             )
                                         )
                                     }

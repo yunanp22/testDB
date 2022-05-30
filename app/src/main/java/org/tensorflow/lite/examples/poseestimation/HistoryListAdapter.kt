@@ -46,7 +46,7 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
             holder.view_text1 = view.findViewById(R.id.posture_number)
 //            holder.view_text2 = view.findViewById(R.id.date)
 //            holder.view_text3 = view.findViewById(R.id.correct_score)
-//            holder.view_favorite = view.findViewById(R.id.checkbox_favorite)
+            holder.view_favorite = view.findViewById(R.id.checkbox_favorite)
 
             view.tag = holder
         } else {
@@ -75,8 +75,37 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
                     firestore.collection("videolist")
                         .whereEqualTo("uid", firebaseAuth.uid)
                         .get()
-                        .addOnSuccessListener{
+                        .addOnSuccessListener{ result ->
                             //videoID를 통해 구분해서 isFavorite 값 업데이트
+                            for(document in result){
+                                if(document["videoPath"].toString() == item.videoPath ){
+                                    if(document["favorite"] as Boolean){
+                                        var docName : String = document.id
+                                        firestore.collection("videolist").document(docName).update("favorite",false)
+                                    }else {
+                                        var docName : String = document.id
+                                        firestore.collection("videolist").document(docName).update("favorite",true)
+                                    }
+                                }
+                            }
+                        }
+                } else {
+                    firestore.collection("videolist")
+                        .whereEqualTo("uid", firebaseAuth.uid)
+                        .get()
+                        .addOnSuccessListener{ result ->
+                            //videoID를 통해 구분해서 isFavorite 값 업데이트
+                            for(document in result){
+                                if(document["videoPath"].toString() == item.videoPath ){
+                                    if(document["favorite"] as Boolean){
+                                        var docName : String = document.id
+                                        firestore.collection("videolist").document(docName).update("favorite",false)
+                                    }else {
+                                        var docName : String = document.id
+                                        firestore.collection("videolist").document(docName).update("favorite",true)
+                                    }
+                                }
+                            }
                         }
                 }
             }

@@ -20,5 +20,5 @@ data class VideoListData(
     var followthroughAngleDifference: List<Float?>? = null,
     var bitmapOutputList: List<String?>? = null,
     var bitmapList: List<String?>? = null,
-    val isFavorite : Boolean? = false
+    val isFavorite : Boolean = false
 )
