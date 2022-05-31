@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 
 
 class HomeFragment : Fragment() {
-
+    var a = 3
     private lateinit var practiceListFragment: PracticeListFragment
     private lateinit var recordFragment: RecordFragment
     private lateinit var postureVideoFragment: PostureVideoFragment
