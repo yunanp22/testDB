@@ -3,24 +3,20 @@ package org.tensorflow.lite.examples.poseestimation
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.*
-import android.icu.text.AlphabeticIndex
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_resultpopup.*
-import org.tensorflow.lite.examples.poseestimation.data.Device
 import org.tensorflow.lite.examples.poseestimation.data.Person
-import org.tensorflow.lite.examples.poseestimation.ml.ModelType
 import org.tensorflow.lite.examples.poseestimation.ml.MoveNet
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.lang.Math.round
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -158,6 +154,7 @@ class ResultPopupActivity: AppCompatActivity() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    comment.text = null
                     wrongAngleDifference1.text = null
                     wrongAngleDifference2.text = null
                     wrongAngleDifference3.text = null
@@ -165,9 +162,9 @@ class ResultPopupActivity: AppCompatActivity() {
                     wrongAngleDifference5.text = null
                     feedback.text = null
                     if (getSelectedSpinnerItem() == 0) {
-                        comment.text = "어드레스 점수: $score1"
 
                         if(addressBitmap != null) {
+                            comment.text = "어드레스 점수: ${round(score1)}"
                             imageView.setImageBitmap(addressOutputBitmap)
                             resultImage(score1)
                             feedbackAddressAngleDiffernce(addressAngleDifferences!!)
@@ -176,9 +173,9 @@ class ResultPopupActivity: AppCompatActivity() {
                         }
 
                     } else if (getSelectedSpinnerItem() == 1) {
-                        comment.text = "푸쉬어웨이 점수: $score2"
 
                         if(pushawayBitmap != null) {
+                            comment.text = "푸쉬어웨이 점수: ${round(score2)}"
                             resultImage(score2)
                             imageView.setImageBitmap(pushawayOutputBitmap)
                             feedbackPushAngleDiffernce(pushawayAngleDifferences!!)
@@ -186,9 +183,9 @@ class ResultPopupActivity: AppCompatActivity() {
                             imageView.setImageResource(R.drawable.bowling)
                         }
                     } else if (getSelectedSpinnerItem() == 2) {
-                        comment.text = "다운스윙 점수: $score3"
 
                         if(downswingBitmap != null) {
+                            comment.text = "다운스윙 점수: ${round(score3)}"
                             imageView.setImageBitmap(downswingOutputBitmap)
                             resultImage(score3)
                             feedbackDownAngleDiffernce(downswingAngleDifferences!!)
@@ -196,9 +193,9 @@ class ResultPopupActivity: AppCompatActivity() {
                             imageView.setImageResource(R.drawable.bowling)
                         }
                     } else if (getSelectedSpinnerItem() == 3) {
-                        comment.text = "백스윙 점수: $score4"
 
                         if(backswingBitmap != null) {
+                            comment.text = "백스윙 점수: ${round(score4)}"
                             imageView.setImageBitmap(backswingOutputBitmap)
                             resultImage(score4)
                             feedbackBackAngleDiffernce(backswingAngleDifferences!!)
@@ -206,8 +203,8 @@ class ResultPopupActivity: AppCompatActivity() {
                             imageView.setImageResource(R.drawable.bowling)
                         }
                     } else if (getSelectedSpinnerItem() == 4) {
-                        comment.text = "포워드 점수: $score5"
                         if(forwardswingBitmap != null) {
+                            comment.text = "포워드 점수: ${round(score5)}"
                             imageView.setImageBitmap(forwardswingOutputBitmap)
                             resultImage(score5)
                             feedbackForwardAngleDiffernce(forwardswingAngleDifferences!!)
@@ -215,8 +212,8 @@ class ResultPopupActivity: AppCompatActivity() {
                             imageView.setImageResource(R.drawable.bowling)
                         }
                     } else {
-                        comment.text = "팔로우스루 점수: $score6"
                         if(followthroughBitmap != null) {
+                            comment.text = "팔로우스루 점수: ${round(score6)}"
                             imageView.setImageBitmap(followthroughOutputBitmap)
                             resultImage(score6)
                             feedbackFollowAngleDiffernce(followthroughAngleDifferences!!)
@@ -341,10 +338,10 @@ class ResultPopupActivity: AppCompatActivity() {
     }
 
     fun feedbackAddressAngleDiffernce(addressAngleDifferences: FloatArray) {
-        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${addressAngleDifferences[0]}"
-        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${addressAngleDifferences[1]}"
-        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${addressAngleDifferences[2]}"
-        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${addressAngleDifferences[3]}"
+        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${round(addressAngleDifferences[0])}"
+        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${round(addressAngleDifferences[1])}"
+        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${round(addressAngleDifferences[2])}"
+        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${round(addressAngleDifferences[3])}"
         if (addressAngleDifferences!![0] >= 10.0) {
             feedback.text = "오른쪽 팔꿈치가 많이 벌어졌네요! 팔을 90도로 만들어서 팔꿈치를 옆구리에 딱 붙여주세요!\n"
         }else if (addressAngleDifferences!![0] <= -10.0) {
@@ -352,9 +349,9 @@ class ResultPopupActivity: AppCompatActivity() {
         }
 
         if (addressAngleDifferences!![1] >= 10.0) {
-            feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 벌어졌네요! 각도를 조금 줄여주세요!\n"
+            feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 벌어졌네요! 어깨를 일직선으로 펴주세요!\n"
         }else if(addressAngleDifferences[1] <= -10.0) {
-            feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 좁네요! 각도를 조금 벌려주세요!\n"
+            feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 좁네요! 어깨를 일직선으로 펴주세요!\n"
         }
 
         if (addressAngleDifferences!![2] >= 10.0) {
@@ -363,9 +360,9 @@ class ResultPopupActivity: AppCompatActivity() {
             feedback.text = "${feedback.text}오른쪽 골반 각도가 많이 좁네요! 각도를 조금 벌려주세요!\n"
         }
         if (addressAngleDifferences!![3] >= 10.0) {
-            feedback.text = "${feedback.text}오른쪽 무릎 각도가 많이 벌어졌네요! 각도를 조금 줄여주세요!\n"
+            feedback.text = "${feedback.text}오른쪽 무릎 각도가 많이 벌어졌네요! 무릎을 살짝 구부려주세요!\n"
         }else if(addressAngleDifferences[3] <= -10.0) {
-            feedback.text = "${feedback.text}오른쪽 무릎 각도가 많이 좁네요! 각도를 조금 벌려주세요!\n"
+            feedback.text = "${feedback.text}오른쪽 무릎 각도가 많이 좁네요! 무릎을 살짝 펴주세요!\n"
         }
         if(feedback.text == null){
             feedback.text = "짝짝짝! 완벽한 자세에요!"
@@ -373,16 +370,16 @@ class ResultPopupActivity: AppCompatActivity() {
     }
 
     fun feedbackPushAngleDiffernce(pushawayAngleDifferences: FloatArray) {
-        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${pushawayAngleDifferences!![0]}"
-        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${pushawayAngleDifferences!![1]}"
-        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${pushawayAngleDifferences!![2]}"
-        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${pushawayAngleDifferences!![3]}"
-        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${pushawayAngleDifferences!![4]}"
+        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${round(pushawayAngleDifferences!![0])}"
+        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${round(pushawayAngleDifferences!![1])}"
+        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${round(pushawayAngleDifferences!![2])}"
+        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${round(pushawayAngleDifferences!![3])}"
+        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${round(pushawayAngleDifferences!![4])}"
 
         if (pushawayAngleDifferences!![0] >= 10.0) {
-            feedback.text = "오른쪽 팔꿈치가 많이 벌어졌네요! 팔을 90도로 만들어서 팔꿈치를 옆구리에 딱 붙여주세요!\n"
+            feedback.text = "오른쪽 팔꿈치가 많이 벌어졌네요! 팔꿈치를 살짝 좁혀주세요!\n"
         }else if (pushawayAngleDifferences!![0] <= -10.0) {
-            feedback.text = "오른쪽 팔꿈치가 많이 좁네요! 팔을 90도로 만들어서 팔꿈치를 옆구리에 딱 붙여주세요!\n"
+            feedback.text = "오른쪽 팔꿈치가 많이 좁네요! 팔꿈치를 살짝 벌려주세요!\n"
         }
 
         if (pushawayAngleDifferences!![1] >= 10.0) {
@@ -415,11 +412,11 @@ class ResultPopupActivity: AppCompatActivity() {
     }
 
     fun feedbackDownAngleDiffernce(angleDifferences: FloatArray) {
-        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${angleDifferences!![0]}"
-        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${angleDifferences!![1]}"
-        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${angleDifferences!![2]}"
-        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${angleDifferences!![3]}"
-        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${angleDifferences!![4]}"
+        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${round(angleDifferences!![0])}"
+        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${round(angleDifferences!![1])}"
+        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${round(angleDifferences!![2])}"
+        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${round(angleDifferences!![3])}"
+        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${round(angleDifferences!![4])}"
 
         if (angleDifferences!![0] >= 10.0) {
             feedback.text = "오른쪽 팔꿈치가 많이 벌어졌네요! 팔을 90도로 만들어서 팔꿈치를 옆구리에 딱 붙여주세요!\n"
@@ -428,9 +425,9 @@ class ResultPopupActivity: AppCompatActivity() {
         }
 
         if (angleDifferences!![1] >= 10.0) {
-            feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 벌어졌네요! 각도를 조금 줄여주세요!\n"
+            feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 벌어졌네요! 어깨를 일직선으로 펴주세요!\n"
         }else if(angleDifferences[1] <= -10.0) {
-            feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 좁네요! 각도를 조금 벌려주세요!\n"
+            feedback.text = "${feedback.text}오른쪽 어깨 각도가 많이 좁네요! 어깨를 일직선으로 펴주세요!\n"
         }
 
         if (angleDifferences!![2] >= 10.0) {
@@ -457,11 +454,11 @@ class ResultPopupActivity: AppCompatActivity() {
     }
 
     fun feedbackBackAngleDiffernce(angleDifferences: FloatArray) {
-        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${angleDifferences!![0]}"
-        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${angleDifferences!![1]}"
-        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${angleDifferences!![2]}"
-        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${angleDifferences!![3]}"
-        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${angleDifferences!![4]}"
+        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${round(angleDifferences!![0])}"
+        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${round(angleDifferences!![1])}"
+        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${round(angleDifferences!![2])}"
+        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${round(angleDifferences!![3])}"
+        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${round(angleDifferences!![4])}"
 
         if (angleDifferences!![0] >= 10.0) {
             feedback.text = "오른쪽 팔꿈치가 많이 벌어졌네요! 팔을 90도로 만들어서 팔꿈치를 옆구리에 딱 붙여주세요!\n"
@@ -495,11 +492,11 @@ class ResultPopupActivity: AppCompatActivity() {
     }
 
     fun feedbackForwardAngleDiffernce(angleDifferences: FloatArray) {
-        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${angleDifferences!![0]}"
-        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${angleDifferences!![1]}"
-        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${angleDifferences!![2]}"
-        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${angleDifferences!![3]}"
-        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${angleDifferences!![4]}"
+        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${round(angleDifferences!![0])}"
+        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${round(angleDifferences!![1])}"
+        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${round(angleDifferences!![2])}"
+        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${round(angleDifferences!![3])}"
+        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${round(angleDifferences!![4])}"
 
         if (angleDifferences!![0] >= 10.0) {
             feedback.text = "오른쪽 팔꿈치가 많이 벌어졌네요! 팔을 90도로 만들어서 팔꿈치를 옆구리에 딱 붙여주세요!\n"
@@ -533,11 +530,11 @@ class ResultPopupActivity: AppCompatActivity() {
     }
 
     fun feedbackFollowAngleDiffernce(angleDifferences: FloatArray) {
-        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${angleDifferences!![0]}"
-        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${angleDifferences!![1]}"
-        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${angleDifferences!![2]}"
-        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${angleDifferences!![3]}"
-        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${angleDifferences!![4]}"
+        wrongAngleDifference1.text = "오른쪽 팔꿈치 각도 차이: ${round(angleDifferences!![0])}"
+        wrongAngleDifference2.text = "오른쪽 어깨 각도 차이: ${round(angleDifferences!![1])}"
+        wrongAngleDifference3.text = "오른쪽 골반 각도 차이: ${round(angleDifferences!![2])}"
+        wrongAngleDifference4.text = "오른쪽 무릎 각도 차이: ${round(angleDifferences!![3])}"
+        wrongAngleDifference5.text = "왼쪽 무릎 각도 차이: ${round(angleDifferences!![4])}"
         if (angleDifferences!![0] >= 10.0 || angleDifferences[0] <= -10.0) {
             feedback.text = "팔로스루 자세에서 오른쪽 팔꿈치가 많이 벌어졌어요.. 이러면 공이 뭐 어떻게 되요\n"
         }
