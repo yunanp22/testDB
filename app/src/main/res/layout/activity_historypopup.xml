@@ -31,16 +31,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-<!--            <FrameLayout-->
-<!--                android:id="@+id/history_video_frame"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--               >-->
-<!--                -->
-<!--            </FrameLayout>-->
+            <!--            <FrameLayout-->
+            <!--                android:id="@+id/history_video_frame"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--               >-->
+            <!--                -->
+            <!--            </FrameLayout>-->
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/history_posture_cardview"
@@ -65,12 +65,12 @@
                     android:id="@+id/history_posture_image"
                     android:layout_width="350dp"
                     android:layout_height="350dp" />
+
                 <VideoView
                     android:id="@+id/history_video"
                     android:layout_width="360dp"
                     android:layout_height="360dp"
-                    android:layout_gravity="center"
-                    />
+                    android:layout_gravity="center" />
 
 
                 <!--            android:layout_width="wrap_content"-->
@@ -107,14 +107,26 @@
                 app:layout_constraintTop_toBottomOf="@id/history_comment_cardview" />
 
             <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="30dp"
+                android:text="각도 차이"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/history_comment" />
+
+            <TextView
                 android:id="@+id/history_wrongAngle1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text=""
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/history_comment" />
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <TextView
                 android:id="@+id/history_wrongAngle2"
@@ -157,14 +169,26 @@
                 app:layout_constraintTop_toBottomOf="@+id/history_wrongAngle4" />
 
             <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="20dp"
+                android:text="피드백"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/history_wrongAngle5" />
+
+            <TextView
                 android:id="@+id/history_feedback"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text=""
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/history_wrongAngle5" />
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
