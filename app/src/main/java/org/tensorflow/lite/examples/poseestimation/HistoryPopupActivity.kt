@@ -37,11 +37,7 @@ class HistoryPopupActivity: AppCompatActivity() {
     private lateinit var wrongAngleDifference5: TextView
     private lateinit var feedback: TextView
 
-
     private lateinit var poseAngleDifferences: Array<List<Float?>?>
-
-    private var isTrackerEnabled = false
-
 
     //firebase Auth
     private lateinit var firebaseAuth: FirebaseAuth
@@ -89,58 +85,6 @@ class HistoryPopupActivity: AppCompatActivity() {
 
         item = intent.getStringExtra("itemvideopath")
 
-
-//        var score1 = intent.getFloatExtra("addressScore", 0.0f)
-//        var score2 = intent.getFloatExtra("pushawayScore", 0.0f)
-//        var score3 = intent.getFloatExtra("downswingScore", 0.0f)
-//        var score4 = intent.getFloatExtra("backswingScore", 0.0f)
-//        var score5 = intent.getFloatExtra("forwardswingScore", 0.0f)
-//        var score6 = intent.getFloatExtra("followthroughScore", 0.0f)
-//
-//        var scoreList = listOf(score1, score2, score3, score4, score5, score6)
-//        Log.d("TAG", "score1 : ${score1}")
-//
-//        var addressResultURI = intent.getStringExtra("addressuri")
-//        var pushawayResultURI = intent.getStringExtra("pushawayuri")
-//        var downswingResultURI = intent.getStringExtra("downswinguri")
-//        var backswingResultURI = intent.getStringExtra("backswinguri")
-//        var forwardswingResultURI = intent.getStringExtra("forwardswinguri")
-//        var followthroughResultURI = intent.getStringExtra("followthroughuri")
-//        Log.d("TAG", "addressResultURI : ${addressResultURI}")
-//
-//        var addressBitmap = BitmapFactory.decodeFile(addressResultURI)
-//        var pushawayBitmap = BitmapFactory.decodeFile(pushawayResultURI)
-//        var downswingBitmap = BitmapFactory.decodeFile(downswingResultURI)
-//        var backswingBitmap = BitmapFactory.decodeFile(backswingResultURI)
-//        var forwardswingBitmap = BitmapFactory.decodeFile(forwardswingResultURI)
-//        var followthroughBitmap = BitmapFactory.decodeFile(followthroughResultURI)
-//        Log.d("TAG", "addressBitmap : ${addressBitmap}")
-//
-//        var bitmapList = listOf(addressResultURI, pushawayResultURI, downswingResultURI, backswingResultURI, forwardswingResultURI, followthroughResultURI)
-//
-//        var addressAngleDifferences = intent.getFloatArrayExtra("addressAngleDifferences")
-//        var pushawayAngleDifferences = intent.getFloatArrayExtra("pushawayAngleDifferences")
-//        var downswingAngleDifferences = intent.getFloatArrayExtra("downswingAngleDifferences")
-//        var backswingAngleDifferences = intent.getFloatArrayExtra("backswingAngleDifferences")
-//        var forwardswingAngleDifferences = intent.getFloatArrayExtra("forwardswingAngleDifferences")
-//        var followthroughAngleDifferences = intent.getFloatArrayExtra("followthroughAngleDifferences")
-//        Log.d("TAG", "addressAngleDifferences : ${addressAngleDifferences}")
-//
-//        var addressPerson = intent.getParcelableExtra<Person>("addressperson")
-//        var pushawayPerson = intent.getParcelableExtra<Person>("pushawayperson")
-//        var downswingPerson = intent.getParcelableExtra<Person>("downswingperson")
-//        var backswingPerson = intent.getParcelableExtra<Person>("backswingperson")
-//        var forwardswingPerson = intent.getParcelableExtra<Person>("forwardswingperson")
-//        var followthroughPerson = intent.getParcelableExtra<Person>("followthroughperson")
-//
-//        var personList = listOf(addressPerson, pushawayPerson, downswingPerson, backswingPerson, forwardswingPerson, followthroughPerson)
-//
-//        var fileName = intent.getStringExtra("filename")
-//
-//
-//        poseAngleDifferences = arrayOf(addressAngleDifferences, pushawayAngleDifferences,
-//            downswingAngleDifferences, backswingAngleDifferences, forwardswingAngleDifferences, followthroughAngleDifferences)
-
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
@@ -161,8 +105,6 @@ class HistoryPopupActivity: AppCompatActivity() {
             .addOnSuccessListener { result ->
                 Log.d("TAG", "myDialog: $result")
 
-
-
                 for(document in result) {
 
                     if (document["videoPath"].toString() == item ) {
@@ -178,13 +120,6 @@ class HistoryPopupActivity: AppCompatActivity() {
                         bitmapOutputList = document["bitmapOutputList"] as List<String?>?
                         bitmapList = document["bitmapList"] as List<String?>?
 
-                        var addressBitmap = BitmapFactory.decodeFile(bitmapList!![0])
-                        var pushawayBitmap = BitmapFactory.decodeFile(bitmapList!![1])
-                        var downswingBitmap = BitmapFactory.decodeFile(bitmapList!![2])
-                        var backswingBitmap = BitmapFactory.decodeFile(bitmapList!![3])
-                        var forwardswingBitmap = BitmapFactory.decodeFile(bitmapList!![4])
-                        var followthroughBitmap = BitmapFactory.decodeFile(bitmapList!![5])
-
                         var addressOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![0])
                         var pushawayOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![1])
                         var downswingOutputBitmap = BitmapFactory.decodeFile(bitmapOutputList!![2])
@@ -199,14 +134,8 @@ class HistoryPopupActivity: AppCompatActivity() {
                         var forwardswingAngleDifferences = forwardswingAngleDifference
                         var followthroughAngleDifferences = followthroughAngleDifference
 
-
-
                         poseAngleDifferences = arrayOf(addressAngleDifferences, pushawayAngleDifferences,
             downswingAngleDifferences, backswingAngleDifferences, forwardswingAngleDifferences, followthroughAngleDifferences)
-//                        Log.d("TAG", "addressAngleDifferences : ${addressAngleDifferences}")
-
-                            var addressPerson : Person? = null
-
 
                         var addressScore = scoreList!![0]
                         var pushawayScore = scoreList!![1]
@@ -218,88 +147,94 @@ class HistoryPopupActivity: AppCompatActivity() {
                         var scores = arrayOf(addressScore, pushawayScore, downswingScore, backswingScore, forwardswingScore, followthroughScore)
                         var avgScore = getAvgScore(scores)
 
-
-
                         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                             override fun onNothingSelected(parent: AdapterView<*>?) {
 
                             }
 
                             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                                wrongAngleDifference1.text = null
-                                wrongAngleDifference2.text = null
-                                wrongAngleDifference3.text = null
-                                wrongAngleDifference4.text = null
-                                wrongAngleDifference5.text = null
-                                feedback.text = null
-                                if (getSelectedSpinnerItem() == 0) {
-                                    videoView.visibility = View.VISIBLE
-                                    imageView.visibility = View.INVISIBLE
+                                    wrongAngleDifference1.text = null
+                                    wrongAngleDifference2.text = null
+                                    wrongAngleDifference3.text = null
+                                    wrongAngleDifference4.text = null
+                                    wrongAngleDifference5.text = null
+                                    feedback.text = null
+                                    if (getSelectedSpinnerItem() == 0) {
+                                        videoView.visibility = View.VISIBLE
+                                        imageView.visibility = View.INVISIBLE
+                                        commentImageView.visibility = View.INVISIBLE
 
-                                    videoView.requestFocus()
-                                    videoView.start()
+                                        videoView.requestFocus()
+                                        videoView.start()
 
-                                    comment.text = "$avgScore"
+                                        comment.text = "평균 점수: $avgScore"
 
-                                } else if (getSelectedSpinnerItem() == 1) {
-                                    videoView.visibility = View.INVISIBLE
-                                    imageView.visibility = View.VISIBLE
+                                    } else if (getSelectedSpinnerItem() == 1) {
+                                        videoView.visibility = View.INVISIBLE
+                                        imageView.visibility = View.VISIBLE
+                                        commentImageView.visibility = View.VISIBLE
 
-                                    if(addressOutputBitmap != null) {
-                                        imageView.setImageBitmap(addressOutputBitmap)
-                                        resultImage(addressScore)
+                                        if(addressOutputBitmap != null) {
+                                            imageView.setImageBitmap(addressOutputBitmap)
+                                            resultImage(addressScore)
 
-                                    }  else {
-                                        imageView.setImageResource(R.drawable.bowling)
-                                    }
+                                        }  else {
+                                            imageView.setImageResource(R.drawable.bowling)
+                                        }
 
-                                } else if (getSelectedSpinnerItem() == 2) {
-                                    videoView.visibility = View.INVISIBLE
-                                    imageView.visibility = View.VISIBLE
+                                    } else if (getSelectedSpinnerItem() == 2) {
+                                        videoView.visibility = View.INVISIBLE
+                                        imageView.visibility = View.VISIBLE
+                                        commentImageView.visibility = View.VISIBLE
 
-                                    if(pushawayOutputBitmap != null) {
-                                        imageView.setImageBitmap(pushawayOutputBitmap)
+                                        if(pushawayOutputBitmap != null) {
+                                            imageView.setImageBitmap(pushawayOutputBitmap)
+                                        } else {
+                                            imageView.setImageResource(R.drawable.bowling)
+                                        }
+
+                                    } else if (getSelectedSpinnerItem() == 3) {
+                                        videoView.visibility = View.INVISIBLE
+                                        imageView.visibility = View.VISIBLE
+                                        commentImageView.visibility = View.VISIBLE
+
+                                        if(downswingOutputBitmap != null) {
+                                            imageView.setImageBitmap(downswingOutputBitmap)
+                                        } else {
+                                            imageView.setImageResource(R.drawable.bowling)
+                                        }
+                                    } else if (getSelectedSpinnerItem() == 4) {
+                                        videoView.visibility = View.INVISIBLE
+                                        imageView.visibility = View.VISIBLE
+                                        commentImageView.visibility = View.VISIBLE
+
+                                        if(backswingOutputBitmap != null) {
+                                            imageView.setImageBitmap(backswingOutputBitmap)
+                                        } else {
+                                            imageView.setImageResource(R.drawable.bowling)
+                                        }
+                                    } else if(getSelectedSpinnerItem() == 5) {
+                                        videoView.visibility = View.INVISIBLE
+                                        imageView.visibility = View.VISIBLE
+                                        commentImageView.visibility = View.VISIBLE
+
+                                        if(forwardswingOutputBitmap != null) {
+                                            imageView.setImageBitmap(forwardswingOutputBitmap)
+                                        } else {
+                                            imageView.setImageResource(R.drawable.bowling)
+                                        }
                                     } else {
-                                        imageView.setImageResource(R.drawable.bowling)
+                                        videoView.visibility = View.INVISIBLE
+                                        imageView.visibility = View.VISIBLE
+                                        commentImageView.visibility = View.VISIBLE
+
+                                        if(followthroughOutputBitmap != null) {
+                                            imageView.setImageBitmap(followthroughOutputBitmap)
+                                        } else {
+                                            imageView.setImageResource(R.drawable.bowling)
+                                        }
                                     }
 
-                                } else if (getSelectedSpinnerItem() == 3) {
-                                    videoView.visibility = View.INVISIBLE
-                                    imageView.visibility = View.VISIBLE
-
-                                    if(downswingOutputBitmap != null) {
-                                        imageView.setImageBitmap(downswingOutputBitmap)
-                                    } else {
-                                        imageView.setImageResource(R.drawable.bowling)
-                                    }
-                                } else if (getSelectedSpinnerItem() == 4) {
-                                    videoView.visibility = View.INVISIBLE
-                                    imageView.visibility = View.VISIBLE
-
-                                    if(backswingOutputBitmap != null) {
-                                        imageView.setImageBitmap(backswingOutputBitmap)
-                                    } else {
-                                        imageView.setImageResource(R.drawable.bowling)
-                                    }
-                                } else if(getSelectedSpinnerItem() == 5) {
-                                    videoView.visibility = View.INVISIBLE
-                                    imageView.visibility = View.VISIBLE
-
-                                    if(forwardswingOutputBitmap != null) {
-                                        imageView.setImageBitmap(forwardswingOutputBitmap)
-                                    } else {
-                                        imageView.setImageResource(R.drawable.bowling)
-                                    }
-                                } else {
-                                    videoView.visibility = View.INVISIBLE
-                                    imageView.visibility = View.VISIBLE
-
-                                    if(followthroughOutputBitmap != null) {
-                                        imageView.setImageBitmap(followthroughOutputBitmap)
-                                    } else {
-                                        imageView.setImageResource(R.drawable.bowling)
-                                    }
-                                }
                             }
                         }
 
@@ -309,12 +244,13 @@ class HistoryPopupActivity: AppCompatActivity() {
                     }
                 }
 
+
             }
             .addOnFailureListener { exception ->
 
             }
 
-        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -332,19 +268,6 @@ class HistoryPopupActivity: AppCompatActivity() {
         }
         return sum/count
     }
-
-    private fun visualize(pose: PoseType, persons: Person, bitmap: Bitmap, array: Array<List<Float?>?>): Bitmap {
-
-        val outputBitmap = VisualizationUtils.drawBodyKeypointsByScoreInHistory(
-            pose,
-            array,
-            bitmap,
-            persons, false
-        )
-
-        return outputBitmap
-    }
-
 
     fun getSelectedSpinnerItem(): Int {
         return spinner.selectedItemPosition

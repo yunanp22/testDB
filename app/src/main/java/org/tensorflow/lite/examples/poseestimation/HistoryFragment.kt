@@ -48,9 +48,9 @@ class HistoryFragment : Fragment() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        var sum : Int = 0
+        var sum : Float = 0.0f
         var count : Int = 0
-        var recentScore : Int = 0
+        var recentScore : Float = 0.0f
 
         var VideoList = arrayListOf<VideoListData>()
         firestore.collection("videolist")
@@ -67,16 +67,22 @@ class HistoryFragment : Fragment() {
 //                    count++
 //                    recentScore = c
 //
-//                    // 기록 불러오기
-//                    val date = document["date"]
-//                    val dateFormat = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
-//                    val strDate = dateFormat.format(date).toString()
+                    //자세별 평균불러오기
+                    var tempScore : String = document["score"].toString()
+                    var scoreFloat : Float = tempScore.toFloat()
+
+                    sum += scoreFloat
+                    count++
+                    if(count == 1){
+                        recentScore = scoreFloat
+                    }
+
                     VideoList.add(
                         VideoListData(
                             document["createAt"] as Date?,
                         document["uid"].toString(),
                         document["videoPath"].toString(),
-                        0.0f,
+                            scoreFloat,
                         document["scoreList"] as List<Float>?,
                         document["addressAngleDifference"] as List<Float?>?,
                         document["pushawayAngleDifference"] as List<Float?>?,
@@ -90,17 +96,17 @@ class HistoryFragment : Fragment() {
                     )
                     )
                 }
-                var avg = 0
+                var avgTotal = 0
                 //평균 계산 후 avg에 업데이트
                 if (count == 0){
-                    avg = 0
+                    avgTotal = 0
                 } else {
-                    avg = sum/count
+                    avgTotal = (sum/count).toInt()
                 }
 
                 var userInfo = UsersData()
                 //평균으로 등급 부여
-                var grade : Int = when(avg){
+                var grade : Int = when(avgTotal){
                     in 95 until 100 -> 1
                     in 85 until 94 -> 2
                     in 84 until 84 -> 3
@@ -112,9 +118,9 @@ class HistoryFragment : Fragment() {
                     else -> 9
                 }
                 println(grade)
-                userInfo.avg = avg
+                userInfo.avg = avgTotal
                 userInfo.grade = grade
-                userInfo.recentScore = recentScore
+                userInfo.recentScore = recentScore.toInt()
                 firestore?.collection("users")?.document(firebaseAuth?.uid.toString())?.update("avg", userInfo.avg,"grade", userInfo.grade, "recentScore", userInfo.recentScore )
 
 
@@ -191,13 +197,15 @@ class HistoryFragment : Fragment() {
                                     recentScore = c
 
                                     // 기록 불러오기
+                                    var tempScore : String = document["score"].toString()
+                                    var scoreFloat : Float = tempScore.toFloat()
 
                                     VideoList.add(
                                         VideoListData(
                                             document["createAt"] as Date?,
                                             document["uid"].toString(),
                                             document["videoPath"].toString(),
-                                            0.0f,
+                                            scoreFloat,
                                             document["scoreList"] as List<Float>?,
                                             document["addressAngleDifference"] as List<Float?>?,
                                             document["pushawayAngleDifference"] as List<Float?>?,
@@ -271,13 +279,15 @@ class HistoryFragment : Fragment() {
                                     //선택된것만
                                     if(document["favorite"] == true){
                                         // 기록 불러오기
+                                        var tempScore : String = document["score"].toString()
+                                        var scoreFloat : Float = tempScore.toFloat()
 
                                         VideoList.add(
                                             VideoListData(
                                                 document["createAt"] as Date?,
                                                 document["uid"].toString(),
                                                 document["videoPath"].toString(),
-                                                0.0f,
+                                                scoreFloat,
                                                 document["scoreList"] as List<Float>?,
                                                 document["addressAngleDifference"] as List<Float?>?,
                                                 document["pushawayAngleDifference"] as List<Float?>?,

@@ -40,7 +40,7 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
             holder = ViewHolder()
             holder.view_image1 = view.findViewById(R.id.posturePhotoImg)
             holder.view_text1 = view.findViewById(R.id.posture_number)
-//            holder.view_text2 = view.findViewById(R.id.date)
+            holder.view_text2 = view.findViewById(R.id.correct_score)
 //            holder.view_text3 = view.findViewById(R.id.correct_score)
             holder.view_favorite = view.findViewById(R.id.checkbox_favorite)
             holder.view_anchor = view.findViewById(R.id.anchor_menu)
@@ -58,10 +58,11 @@ class HistoryListAdapter(val context: Context, val VideoList: ArrayList<VideoLis
 
 
 //        val resourceId = context.resources.getIdentifier(item.image, "drawable", context.packageName)
+        var scoreStr : String = "평균 점수 : " + (item.score?.toInt()).toString() + "점"
 
         holder.view_image1?.setImageResource(R.drawable.bowling)
         holder.view_text1?.text = item.videoPath
-//        holder.view_text2?.text = item.score
+        holder.view_text2?.text = scoreStr
 //        holder.view_text3?.text = item.videoID
         holder.view_favorite?.isChecked = item.isFavorite!!
 

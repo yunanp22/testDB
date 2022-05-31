@@ -135,7 +135,7 @@ class HomeFragment : Fragment() {
                 //자세 촬영 버튼 클릭 리스너 설정
                 home_start_button.setOnClickListener {
 
-                    onHomeStartButtonClicked()
+                    onHomeStartButtonClicked(view)
                 }
 
                 //자세 버튼 클릭 리스너 설정
@@ -147,13 +147,15 @@ class HomeFragment : Fragment() {
     }
 
     //자세 촬영 버튼 클릭 리스너 정의
-    private fun onHomeStartButtonClicked() {
-        recordFragment = RecordFragment.newInstance()
-        //view.findViewById<MenuView.ItemView>(R.id.menu_record) = true
-
-        parentFragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_top).replace(R.id.fragments_frame, recordFragment).addToBackStack(null).commit()
-
-        // parentFragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,R.anim.exit_to_right).add(R.id.fragments_frame, recordFragment).commit()
+    private fun onHomeStartButtonClicked(view: View) {
+//        recordFragment = RecordFragment.newInstance()
+//        //view.findViewById<MenuView.ItemView>(R.id.menu_record) = true
+//
+//        parentFragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_top).replace(R.id.fragments_frame, recordFragment).addToBackStack(null).commit()
+//
+//        // parentFragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,R.anim.exit_to_right).add(R.id.fragments_frame, recordFragment).commit()
+        val navigation: BottomNavigationView = view.rootView.findViewById(R.id.bottom_nav)
+        navigation.selectedItemId = R.id.menu_record
     }
 
     //자세 버튼 클릭 리스너 정의

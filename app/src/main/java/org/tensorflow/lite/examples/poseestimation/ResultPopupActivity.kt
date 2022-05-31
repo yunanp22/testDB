@@ -263,6 +263,8 @@ class ResultPopupActivity: AppCompatActivity() {
                 videoList.bitmapList = bitmapList
 //                videoList.bitmapList = bitmapList
 
+                var scoreArray = arrayOf(scoreList[0], scoreList[1], scoreList[2], scoreList[3], scoreList[4], scoreList[5])
+                videoList.score = getAvgScore(scoreArray)
                 firestore?.collection("videolist").add(videoList)
 
                 RecordFragment.resetRecordedInfo()
@@ -553,6 +555,19 @@ class ResultPopupActivity: AppCompatActivity() {
         if(feedback.text == null){
             feedback.text = "짝짝짝! 완벽한 자세에요!"
         }
+    }
+
+    fun getAvgScore(array: Array<Float>):Float{
+        var sum = 0.0f
+        var count = 0
+        for(i in 0 until array.size){
+            if(array[i]!=0.0f) {
+                sum += array[i]
+                count = i + 1
+            }
+
+        }
+        return sum/count
     }
 
 }
